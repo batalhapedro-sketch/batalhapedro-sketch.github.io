@@ -22,6 +22,7 @@
   --text:#F5F5F7; --text-2:#A3A3AD; --text-3:#6E6E78;
   --g1:#262C3A; --g2:#3322FF; --g3:#1A8CFF; --g4:#00E1FF;
   --grad:linear-gradient(120deg,var(--g2) 0%,var(--g3) 55%,var(--g4) 100%);
+  --neon:#7A66FF; --neon-glow:rgba(122,102,255,.55);
   --font:"Geist",ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
   --maxw:1200px; --r:20px;
@@ -61,18 +62,16 @@ a{color:inherit;text-decoration:none}
 @media (max-width:860px){.nav .btn{margin-left:auto}}
 
 /* hero */
-.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding-block:130px 90px;overflow:hidden}
-.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding-block:130px 90px;overflow-x:clip}
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
 .hero-bg::before{content:"";position:absolute;width:900px;height:900px;right:-240px;top:-220px;border-radius:50%;
   background:radial-gradient(closest-side,rgba(51,34,255,.55),rgba(26,140,255,.25) 45%,transparent 72%);filter:blur(20px);animation:drift 18s ease-in-out infinite alternate}
 .hero-bg::after{content:"";position:absolute;width:620px;height:620px;right:8%;bottom:-320px;border-radius:50%;
   background:radial-gradient(closest-side,rgba(0,225,255,.32),transparent 70%);filter:blur(30px);animation:drift 22s ease-in-out infinite alternate-reverse}
 @keyframes drift{from{transform:translate(0,0)}to{transform:translate(-60px,40px)}}
-.zlayer{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;will-change:transform}
-.snake{position:absolute;right:max(-40px,calc(50% - 700px));top:calc(50% - 7vh);transform:translateY(-50%);height:min(512px,50vw);width:auto;max-width:none;opacity:.6}
-@media (max-width:900px){.snake{opacity:.32;height:70vw;right:-60px}}
-.hero{z-index:2}.hero .wrap{z-index:3}
-main>section:not(.hero),main>.divider,footer{position:relative;z-index:2}
+.zwrap{position:absolute;right:max(-40px,calc(50% - 700px));top:50%;width:min(560px,55vw);aspect-ratio:1410/1290;transform:translateY(-50%);pointer-events:none}
+.bigz{display:block;width:100%;height:100%;overflow:visible;opacity:calc(.55 * var(--zfade,1))}
+@media (max-width:900px){.zwrap{right:-80px;width:90vw}.bigz{opacity:calc(.35 * var(--zfade,1))}}
 .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hero .wrap{position:relative;z-index:2;width:100%}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);border-radius:999px;padding:7px 15px;background:rgba(255,255,255,.05);box-shadow:0 8px 24px -8px rgba(0,0,0,.8)}
@@ -113,18 +112,24 @@ h2{margin:0;font-size:clamp(30px,4.2vw,52px);line-height:1.06;letter-spacing:-.0
 .svc.feature:hover{box-shadow:var(--shadow-hi), 0 40px 120px -30px rgba(51,34,255,.6)}
 .tag-new{display:inline-flex;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:rgba(0,225,255,.1);color:#7DEBFF;margin-left:10px;vertical-align:middle}
 
-/* mini-framework (pré-visualização AIR) */
+/* mini-framework (pré-visualização AIR): só preto, branco e roxo néon */
 .air-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.pill{background:#fff;color:#0E0E12;border-radius:14px;padding:14px 14px 12px;position:relative;overflow:hidden;box-shadow:0 18px 40px -16px rgba(0,0,0,.9)}
-.pill::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--pc)}
-.pill h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;color:var(--pc)}
-.pill .row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:10.5px;color:#3a3a44}
-.pill .row b{font-family:var(--mono);font-size:9.5px;color:#fff;background:var(--pc);border-radius:4px;padding:1px 4px;min-width:24px;text-align:center}
+.pill{position:relative;overflow:hidden;background:linear-gradient(180deg,#131318,#08080B);color:var(--text);border-radius:14px;padding:16px 14px 12px;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 18px 40px -16px rgba(0,0,0,.95)}
+.pill::before{content:"";position:absolute;left:14px;right:14px;top:0;height:2px;border-radius:2px;background:var(--neon);box-shadow:0 0 10px var(--neon),0 0 26px var(--neon-glow)}
+.pill h4{margin:0 0 10px;font-size:11px;letter-spacing:.08em;color:#fff;font-weight:600}
+.pill .row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:10.5px;color:var(--text-2)}
+.pill .row b{font-family:var(--mono);font-size:9.5px;font-weight:500;color:#fff;background:rgba(122,102,255,.14);box-shadow:inset 0 0 0 1px rgba(150,135,255,.55);border-radius:4px;padding:1px 4px;min-width:24px;text-align:center}
 .pill .row span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pill .row i{width:7px;height:7px;border-radius:50%;background:#E4E4EA;flex:0 0 auto}
-.pill .row i.g{background:#10B981}.pill .row i.y{background:#F59E0B}.pill .row i.r{background:#E11D48}
-.pv{--pc:#2563EB}.pl{--pc:#EA7A17}.pc{--pc:#E11D48}
+.pill .row i{width:7px;height:7px;border-radius:50%;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.pill .row i.g{background:var(--neon);box-shadow:0 0 8px var(--neon-glow)}
+.pill .row i.y{background:rgba(255,255,255,.7);box-shadow:none}
 .formula{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--text-2);text-align:center}
+.legend{display:flex;justify-content:center;gap:16px;margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--text-3)}
+.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.legend i.g{background:var(--neon);box-shadow:0 0 8px var(--neon-glow)}.legend i.y{background:rgba(255,255,255,.7);box-shadow:none}
+#air .tag-new{background:rgba(122,102,255,.14);color:#C4B9FF;box-shadow:0 0 18px -4px var(--neon-glow)}
+#air .btn-air::before{background:var(--neon)}
+#air .btn-air:hover{box-shadow:0 0 0 4px rgba(122,102,255,.16),0 10px 30px -8px var(--neon-glow)}
 @media (max-width:520px){.air-mini{grid-template-columns:1fr}}
 
 /* método */
@@ -173,6 +178,9 @@ footer{padding-block:48px 56px;color:var(--text-3);font-size:13px}
 .rise{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
 .rise.d1{animation-delay:.08s}.rise.d2{animation-delay:.16s}.rise.d3{animation-delay:.24s}.rise.d4{animation-delay:.32s}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* parallax: o JS só mexe em translate/scale/opacity (propriedades independentes de transform) */
+.divider{transform-origin:50% 50%}
+.cta::before{opacity:var(--cg,1)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -308,14 +316,18 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
 
 <main id="top">
   <section class="hero">
-    <div class="hero-bg"><div class="grain"></div></div>
-    <div class="zlayer" id="zlayer" aria-hidden="true">
-  <svg class="snake" viewBox="-2000 0 3410 1290" preserveAspectRatio="xMaxYMid meet">
-    <defs>
-      <linearGradient id="zg" gradientUnits="userSpaceOnUse" x1="-2000" y1="0" x2="1410" y2="1290">
-        <stop offset="0" stop-color="#262C3A" stop-opacity="0"/><stop offset=".35" stop-color="#3322FF"/><stop offset=".72" stop-color="#1A8CFF"/><stop offset="1" stop-color="#00E1FF"/>
-      </linearGradient>
-      <clipPath id="zclip">
+    <div class="hero-bg" id="heroBg"><div class="grain"></div></div>
+    <div class="zwrap" aria-hidden="true">
+      <svg class="bigz" id="bigz" viewBox="0 0 1410 1290" overflow="visible" focusable="false">
+        <defs>
+          <!-- os paths do Z vêm com transform (escala 0,1 e y invertido): o degradê é definido nesse espaço -->
+          <linearGradient id="zgP" gradientUnits="userSpaceOnUse" x1="0" y1="12900" x2="14100" y2="0"><stop offset="0" stop-color="#3322FF"/><stop offset=".55" stop-color="#1A8CFF"/><stop offset="1" stop-color="#00E1FF"/></linearGradient>
+          <linearGradient id="zx1"><stop offset="0" stop-color="#312BFF" stop-opacity="0"/><stop offset=".35" stop-color="#312BFF"/></linearGradient>
+          <linearGradient id="zx2"><stop offset=".65" stop-color="#1990FF"/><stop offset="1" stop-color="#1990FF" stop-opacity="0"/></linearGradient>
+          <linearGradient id="zx3"><stop offset="0" stop-color="#1A8DFF" stop-opacity="0"/><stop offset=".35" stop-color="#1A8DFF"/></linearGradient>
+          <linearGradient id="zx4"><stop offset=".65" stop-color="#03D9FF"/><stop offset="1" stop-color="#03D9FF" stop-opacity="0"/></linearGradient>
+        </defs>
+        <g fill="url(#zgP)">
 <path transform="translate(0.000000,1290.000000) scale(0.100000,-0.100000)" d="M195 12736 c-20 -14 -20 -34 -20 -930 0 -629 3 -918 11 -926 7 -7
 1740 -10 5780 -10 3344 0 5795 -4 5831 -9 46 -7 76 -19 120 -49 65 -44 130
 -130 144 -189 11 -49 11 -456 0 -505 -13 -55 -68 -134 -126 -178 -29 -22 -57
@@ -390,19 +402,21 @@ l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
 16 50 35 57 43 8 7 28 20 45 28 74 35 192 137 251 215 68 92 102 174 121 292
 16 99 16 207 6 1610 -6 826 -15 1530 -20 1563 -14 93 -89 238 -170 329 -72 80
 -224 167 -336 194 -65 15 -580 17 -6635 19 -5673 3 -6569 1 -6585 -11z"/>
-<rect x="-2000" y="15" width="2060" height="188"/></clipPath>
-    </defs>
-    <path id="snakePath" clip-path="url(#zclip)" d="M -1983 108 H 1297 V 350 L 440 929 V 1183 H 1394" fill="none" stroke="url(#zg)" stroke-width="400" stroke-linejoin="round"/>
-  </svg>
-</div>
+</g>
+        <rect class="zx" data-side="L" data-at="20" y="15" height="188" width="0" fill="url(#zx1)"/>
+        <rect class="zx" data-side="R" data-at="1379" y="15" height="188" width="0" fill="url(#zx2)"/>
+        <rect class="zx" data-side="L" data-at="353" y="1090" height="187" width="0" fill="url(#zx3)"/>
+        <rect class="zx" data-side="R" data-at="1389" y="1090" height="187" width="0" fill="url(#zx4)"/>
+      </svg>
+    </div>
     <div class="wrap">
-      <h1 class="rise d1">Reinventamos a experiência do <span class="grad-text">cliente</span>.</h1>
-      <p class="lead rise d2">Somos uma consultora de estratégia e marketing digital orientada por dados. Ajudamos marcas a serem encontradas, compreendidas e escolhidas: no percurso de compra, nos canais digitais e, agora, dentro das respostas do ChatGPT, Gemini, Perplexity e Claude.</p>
-      <div class="hero-ctas rise d3">
+      <h1 class="rise d1" data-hero="0.30">Reinventamos a experiência do <span class="grad-text">cliente</span>.</h1>
+      <p class="lead rise d2" data-hero="0.22">Somos uma consultora de estratégia e marketing digital orientada por dados. Ajudamos marcas a serem encontradas, compreendidas e escolhidas: no percurso de compra, nos canais digitais e, agora, dentro das respostas do ChatGPT, Gemini, Perplexity e Claude.</p>
+      <div class="hero-ctas rise d3" data-hero="0.15">
         <a class="btn btn-white" href="#servicos">O que fazemos</a>
         <a class="btn btn-air" href="airframework/">Entrar no AIR Framework</a>
       </div>
-      <div class="hero-meta rise d4">
+      <div class="hero-meta rise d4" data-hero="0.09">
         <div><b>30</b>critérios no AIR Score</div>
         <div><b>3</b>pilares: Visibilidade, Legibilidade, Credibilidade</div>
         <div><b>2020</b>fundada no Estoril</div>
@@ -410,15 +424,15 @@ l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
     </div>
   </section>
 
-  <div class="divider"></div>
+  <div class="divider" data-line></div>
 
   <section class="sec" id="servicos"><div class="wrap">
     <div class="sec-head">
-      <div><div class="kicker">O que fazemos</div><h2>Do percurso do cliente à resposta da IA.</h2></div>
-      <p>Trabalhamos onde a decisão acontece. Mapeamos o percurso do consumidor, identificamos as oportunidades com mais impacto e acompanhamos a execução até os resultados aparecerem.</p>
+      <div data-y="28" data-reveal><div class="kicker">O que fazemos</div><h2>Do percurso do cliente à resposta da IA.</h2></div>
+      <p data-y="10" data-reveal>Trabalhamos onde a decisão acontece. Mapeamos o percurso do consumidor, identificamos as oportunidades com mais impacto e acompanhamos a execução até os resultados aparecerem.</p>
     </div>
     <div class="services">
-      <article class="svc feature" id="air">
+      <article class="svc feature" id="air" data-y="12" data-reveal>
         <div>
           <span class="num">01</span>
           <h3>GEO e visibilidade em IA <span class="tag-new">AIR Framework</span></h3>
@@ -428,44 +442,45 @@ l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
         </div>
         <div>
           <div class="air-mini" aria-label="Pré-visualização do AIR Framework">
-            <div class="pill pv"><h4>VISIBILIDADE</h4>
+            <div class="pill pv" data-y="16"><h4>VISIBILIDADE</h4>
               <div class="row"><b>V1</b><span>Páginas por serviço e pergunta</span><i class="g"></i></div>
               <div class="row"><b>V4</b><span>Perfis locais e diretórios</span><i class="g"></i></div>
               <div class="row"><b>V7</b><span>YouTube e podcasts</span><i class="y"></i></div>
               <div class="row"><b>V9</b><span>Índices dos assistentes</span><i class="g"></i></div></div>
-            <div class="pill pl"><h4>LEGIBILIDADE</h4>
+            <div class="pill pl" data-y="38"><h4>LEGIBILIDADE</h4>
               <div class="row"><b>L1</b><span>Entidade consistente</span><i class="y"></i></div>
               <div class="row"><b>L5</b><span>Wikidata e bases de conhecimento</span><i class="r"></i></div>
               <div class="row"><b>L6</b><span>Dados estruturados</span><i class="y"></i></div>
               <div class="row"><b>L9</b><span>Acesso dos crawlers de IA</span><i class="g"></i></div></div>
-            <div class="pill pc"><h4>CREDIBILIDADE</h4>
+            <div class="pill pc" data-y="60"><h4>CREDIBILIDADE</h4>
               <div class="row"><b>C1</b><span>Imprensa e media</span><i class="y"></i></div>
               <div class="row"><b>C5</b><span>Reviews públicas</span><i class="g"></i></div>
               <div class="row"><b>C7</b><span>Comunidades e fóruns</span><i class="r"></i></div>
               <div class="row"><b>C9</b><span>Gestão de avaliações</span><i class="g"></i></div></div>
           </div>
           <div class="formula">AIR = 35 × V/20 + 30 × L/20 + 35 × C/20 → 0–100</div>
+          <div class="legend"><span><i class="g"></i>forte</span><span><i class="y"></i>parcial</span><span><i></i>em falta</span></div>
         </div>
       </article>
-      <article class="svc">
+      <article class="svc" data-y="16" data-reveal>
         <span class="num">02</span>
         <h3>Estratégia de customer experience</h3>
         <p>Mapas de percurso do consumidor, da descoberta à recomendação, construídos sobre dados reais. Priorizamos cada oportunidade num mapa de ação por impacto e esforço, para saber o que fazer primeiro.</p>
         <ul><li>Consumer journey</li><li>Personas</li><li>Mapa de ação</li><li>Posicionamento</li></ul>
       </article>
-      <article class="svc">
+      <article class="svc" data-y="40" data-reveal>
         <span class="num">03</span>
         <h3>Marketing digital orientado por dados</h3>
         <p>SEO e SEM, conteúdo, email e automação, redes sociais e fidelização, desenhados por persona e ligados aos momentos do percurso onde têm mais retorno.</p>
         <ul><li>SEO / SEM</li><li>Content marketing</li><li>Marketing automation</li><li>Loyalty</li></ul>
       </article>
-      <article class="svc">
+      <article class="svc" data-y="16" data-reveal>
         <span class="num">04</span>
         <h3>Formação de equipas</h3>
         <p>Programas de formação em marketing, gestão e experiência do cliente, e eventos de motivação de equipas, pensados para pôr o método a funcionar dentro da organização.</p>
         <ul><li>Marketing e gestão</li><li>Workshops</li><li>Eventos de equipa</li></ul>
       </article>
-      <article class="svc">
+      <article class="svc" data-y="40" data-reveal>
         <span class="num">05</span>
         <h3>Produção cultural e conteúdos</h3>
         <p>Produção de projetos culturais, roteiros e conteúdos audiovisuais, e plataformas conversacionais como o Talk2me, que liga pessoas a lugares, obras e histórias.</p>
@@ -474,54 +489,54 @@ l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
     </div>
   </div></section>
 
-  <div class="divider"></div>
+  <div class="divider" data-line></div>
 
   <section class="sec" id="metodo"><div class="wrap">
     <div class="sec-head">
-      <div><div class="kicker">Método</div><h2>Diagnóstico com prova. Ação com dono.</h2></div>
-      <p>Cada projeto segue o mesmo ciclo: medimos com evidência, transformamos os gaps em ações concretas e voltamos a medir.</p>
+      <div data-y="28" data-reveal><div class="kicker">Método</div><h2>Diagnóstico com prova. Ação com dono.</h2></div>
+      <p data-y="10" data-reveal>Cada projeto segue o mesmo ciclo: medimos com evidência, transformamos os gaps em ações concretas e voltamos a medir.</p>
     </div>
     <div class="steps">
-      <div class="step"><span class="n grad-text">01</span><h3>Diagnóstico</h3><p>Auditoria critério a critério, com fontes, citações e capturas que provam cada avaliação.</p></div>
-      <div class="step"><span class="n grad-text">02</span><h3>Plano de ação</h3><p>Ações priorizadas por impacto e esforço, com responsável, por página e por canal.</p></div>
-      <div class="step"><span class="n grad-text">03</span><h3>Sprints</h3><p>Ciclos curtos de conteúdo, estrutura técnica e autoridade externa, executados com a sua equipa.</p></div>
-      <div class="step"><span class="n grad-text">04</span><h3>Medição</h3><p>Painel fixo de prompts e modelos para acompanhar a evolução face aos concorrentes.</p></div>
+      <div class="step" data-y="10" data-reveal><span class="n grad-text">01</span><h3>Diagnóstico</h3><p>Auditoria critério a critério, com fontes, citações e capturas que provam cada avaliação.</p></div>
+      <div class="step" data-y="22" data-reveal><span class="n grad-text">02</span><h3>Plano de ação</h3><p>Ações priorizadas por impacto e esforço, com responsável, por página e por canal.</p></div>
+      <div class="step" data-y="34" data-reveal><span class="n grad-text">03</span><h3>Sprints</h3><p>Ciclos curtos de conteúdo, estrutura técnica e autoridade externa, executados com a sua equipa.</p></div>
+      <div class="step" data-y="46" data-reveal><span class="n grad-text">04</span><h3>Medição</h3><p>Painel fixo de prompts e modelos para acompanhar a evolução face aos concorrentes.</p></div>
     </div>
   </div></section>
 
-  <div class="divider"></div>
+  <div class="divider" data-line></div>
 
   <section class="sec" id="talk2me"><div class="wrap t2m">
-    <div>
+    <div data-y="24" data-reveal>
       <div class="kicker">Talk2me</div>
       <h2>Pôr os lugares a falar.</h2>
       <p style="color:var(--text-2);font-size:17px;max-width:50ch;margin:22px 0 0">O Talk2me é a nossa plataforma conversacional para cultura e turismo. Com o telemóvel, qualquer pessoa conversa com um monumento, um mural ou um objeto: fica a saber o que representa, quem o criou, vê o making-of e recebe sugestões do que visitar a seguir. Levámo-lo à Covilhã, com o NEST e o festival WOOL, para dar voz à arte urbana da cidade.</p>
     </div>
     <div class="quotes">
-      <figure class="quote" style="margin:0"><p>"A plataforma que nos põe a falar com paredes, arte e objetos."</p><cite>Observador</cite></figure>
-      <figure class="quote" style="margin:0"><p>"Um chatbot que põe os monumentos em Portugal a falar."</p><cite>Visão</cite></figure>
-      <figure class="quote" style="margin:0"><p>"Criada para partilhar informação cultural de forma simples e rápida."</p><cite>SAPO</cite></figure>
+      <figure class="quote" style="margin:0" data-x="70" data-reveal><p>"A plataforma que nos põe a falar com paredes, arte e objetos."</p><cite>Observador</cite></figure>
+      <figure class="quote" style="margin:0" data-x="-70" data-reveal><p>"Um chatbot que põe os monumentos em Portugal a falar."</p><cite>Visão</cite></figure>
+      <figure class="quote" style="margin:0" data-x="70" data-reveal><p>"Criada para partilhar informação cultural de forma simples e rápida."</p><cite>SAPO</cite></figure>
     </div>
   </div></section>
 
-  <div class="divider"></div>
+  <div class="divider" data-line></div>
 
   <section class="sec" id="equipa"><div class="wrap team">
-    <div class="photo"><img src="assets/equipa.jpg" alt="Os três sócios da UZER Consulting" loading="lazy" width="975" height="1300"></div>
+    <div class="photo" data-y="-18" data-reveal><img data-zoom="36" src="assets/equipa.jpg" alt="Os três sócios da UZER Consulting" loading="lazy" width="975" height="1300"></div>
     <div>
       <div class="kicker">Equipa</div>
       <h2>Uma equipa pequena, sénior e próxima.</h2>
       <p style="color:var(--text-2);font-size:17px;max-width:50ch;margin:22px 0 0">Juntamos consultoria de estratégia, marketing digital, investigação de consumidor e produção. Trabalhamos diretamente com quem decide, sem camadas entre o problema e a solução.</p>
       <div class="people">
-        <div class="person"><b>Filipa Caldeira</b><span>Partner</span></div>
-        <div class="person"><b>Nuno Moreira</b><span>Partner</span></div>
-        <div class="person"><b>Pedro Batalha</b><span>Partner</span></div>
+        <div class="person" data-x="46" data-reveal><b>Filipa Caldeira</b><span>Partner</span></div>
+        <div class="person" data-x="46" data-reveal><b>Nuno Moreira</b><span>Partner</span></div>
+        <div class="person" data-x="46" data-reveal><b>Pedro Batalha</b><span>Partner</span></div>
       </div>
     </div>
   </div></section>
 
   <section class="sec" id="contacto" style="padding-top:40px"><div class="wrap">
-    <div class="cta">
+    <div class="cta" data-grow data-reveal>
       <div class="kicker">Contacto</div>
       <h2>Vamos ver onde está a sua marca nas respostas da IA.</h2>
       <p>Começamos por um diagnóstico AIR. Se já é cliente, entre na sua área para ver a auditoria, a evidência de cada critério e o plano de ação.</p>
@@ -673,22 +688,70 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
   const on = () => nav.classList.toggle("scrolled", scrollY > 12);
   addEventListener("scroll", on, { passive: true }); on();
   document.getElementById("yr").textContent = new Date().getFullYear();
-  const layer = document.getElementById("zlayer"), path = document.getElementById("snakePath"), next = document.getElementById("servicos");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const L = path.getTotalLength();
-  path.style.strokeDasharray = L + " " + L;
-  let ticking = false;
-  const update = () => {
-    const end = next.getBoundingClientRect().top + scrollY;          // a secção seguinte ocupa o ecrã inteiro
-    const p = Math.min(1, Math.max(0, scrollY / end));
-    const e = p * p * (3 - 2 * p);                                    // suavizar início e fim
-    path.style.strokeDashoffset = String(-e * L);                     // a cauda recolhe ao longo do Z
-    if (!reduce) layer.style.transform = "translate3d(0," + (-scrollY * 0.35) + "px,0)";
-    layer.style.visibility = p >= 1 ? "hidden" : "visible";
+  // a entrada inicial usa animação em transform/opacity; depois de acabar, sai para o parallax mandar
+  document.querySelectorAll(".rise").forEach(el => el.addEventListener("animationend", () => el.classList.remove("rise"), { once: true }));
+  if (reduce) return;
+
+  const hero = document.querySelector(".hero"), heroBg = document.getElementById("heroBg"), bigz = document.getElementById("bigz");
+  const heroLayers = [...hero.querySelectorAll("[data-hero]")].map(el => ({ el, k: +el.dataset.hero }));
+  const bars = [...bigz.querySelectorAll(".zx")].map(el => ({ el, left: el.dataset.side === "L", at: +el.dataset.at }));
+  const EXT = 1500;                                   // quanto cada barra do Z cresce (unidades do viewBox; o Z tem 1410)
+  const items = [...document.querySelectorAll("[data-y],[data-x],[data-line],[data-reveal],[data-zoom],[data-grow]")].map(el => ({
+    el, y: +el.dataset.y || 0, x: +el.dataset.x || 0, zoom: +el.dataset.zoom || 0,
+    line: el.hasAttribute("data-line"), reveal: el.hasAttribute("data-reveal"), grow: el.hasAttribute("data-grow"), top: 0, h: 0,
+  }));
+  const clamp = v => Math.min(1, Math.max(0, v));
+  const ease = t => t * t * (3 - 2 * t);
+
+  // posições medidas sem os deslocamentos do parallax, para não haver realimentação
+  const measure = () => {
+    items.forEach(it => { it.el.style.translate = it.el.style.scale = ""; });
+    items.forEach(it => { const r = it.el.getBoundingClientRect(); it.top = r.top + scrollY; it.h = r.height; });
+    frame();
+  };
+
+  const frame = () => {
+    const sy = scrollY, vh = innerHeight, k = innerWidth < 768 ? 0.5 : 1;
+
+    // hero: o texto sobe mais depressa e apaga-se; o brilho e o Z ficam para trás (camadas mais fundas)
+    const hh = hero.offsetHeight;
+    if (sy < hh + vh) {
+      const hp = clamp(sy / hh);
+      heroLayers.forEach(({ el, k: hk }) => { el.style.translate = `0 ${(-sy * hk).toFixed(1)}px`; el.style.opacity = String(1 - clamp(hp * 1.3)); });
+      heroBg.style.translate = `0 ${(sy * 0.25).toFixed(1)}px`;
+      bigz.style.translate = `0 ${(sy * 0.62).toFixed(1)}px`;        // o Z fica para trás: continua à vista enquanto estica
+      // barras do Z: no topo o Z é o normal; a descer, esticam na horizontal
+      const d = ease(clamp(sy / (hh * 0.7))) * EXT;
+      bigz.style.setProperty("--zfade", (1 - ease(clamp((sy - hh * 0.4) / (hh * 0.35)))).toFixed(3));   // dissolve-se quando o conteúdo entra
+      bars.forEach(b => {
+        b.el.setAttribute("width", d > 0.5 ? (d + 6).toFixed(1) : "0");
+        b.el.setAttribute("x", (b.left ? b.at - d : b.at).toFixed(1));
+      });
+    }
+
+    items.forEach(it => {
+      const top = it.top - sy;
+      if (top > vh + 200 || top + it.h < -200) return;            // fora do ecrã: não mexer
+      const c = clamp((vh - top) / (vh + it.h)) - 0.5;            // -0.5 a entrar em baixo … +0.5 a sair em cima
+      const r = ease(clamp((vh - top) / (vh * 0.42)));            // entrada: 0 → 1 até chegar a ~60% do ecrã
+      const ty = -c * 2 * it.y * k + (it.reveal ? (1 - r) * 28 * k : 0);
+      const tx = it.x * (1 - r) * k;
+      if (it.line) { it.el.style.scale = `${(0.12 + 0.88 * r).toFixed(3)} 1`; return; }
+      if (it.zoom) { it.el.style.translate = `0 ${(c * 2 * it.zoom * k).toFixed(1)}px`; it.el.style.scale = String(1.14 - 0.06 * (c + 0.5)); return; }
+      it.el.style.translate = `${tx.toFixed(1)}px ${ty.toFixed(1)}px`;
+      if (it.grow) { it.el.style.scale = String(0.93 + 0.07 * r); it.el.style.setProperty("--cg", r.toFixed(3)); }
+      if (it.reveal) it.el.style.opacity = r.toFixed(3);
+    });
     ticking = false;
   };
-  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-  addEventListener("resize", update); update();
+
+  let ticking = false;
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("resize", measure);
+  addEventListener("load", measure);
+  if (document.fonts) document.fonts.ready.then(measure);
+  measure();
 })();
 </script>
 </body>
