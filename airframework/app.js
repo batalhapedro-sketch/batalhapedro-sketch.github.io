@@ -117,13 +117,13 @@ async function boot() {
   catch (e) { renderLogin(e.message); }
 }
 function setupScreen() {
-  return `<div class="login"><div class="login-card"><span class="logo">${LOGO()}</span>
+  return `<div class="login"><div class="login-card"><a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
     <h1>Plataforma AIR — configuração pendente</h1>
     <p class="login-foot">A base de dados ainda não está ligada (config.js sem URL/chave do Supabase).</p></div></div>`;
 }
 function renderLogin(err = "") {
   root.innerHTML = `<main class="login fade-in"><div class="login-card">
-    <span class="logo">${LOGO()}</span>
+    <a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
     <h1>AIR — AI Readiness Score · Área de cliente</h1>
     <form id="login-form" novalidate>
       <div class="field"><label for="lg-user">Username</label><input id="lg-user" class="input" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
@@ -172,7 +172,7 @@ function renderClient() {
   root.innerHTML = `
     ${S.preview ? `<div class="preview-banner">Pré-visualização: está a ver a plataforma como o cliente <b>${esc(c?.name)}</b> vê. <button class="btn sm" id="exit-preview">Voltar ao admin</button></div>` : ""}
     <header class="topbar"><div class="topbar-in">
-      <span class="logo">${LOGO()}</span>
+      <a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
       <div class="crumb"><span class="sep"></span><b>${esc(c?.name || "")}</b></div>
       <div class="spacer"></div>
       ${a ? tabsHTML(a) : ""}
@@ -190,7 +190,7 @@ function renderAdmin() {
   const a = S.view === "audit" ? current() : null;
   root.innerHTML = `
     <header class="topbar"><div class="topbar-in">
-      <span class="logo">${LOGO()}</span>
+      <a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
       <div class="crumb"><span class="sep"></span><span>Admin</span>${a ? `<span>›</span><b>${esc(clientOf(a.client_id)?.name)}</b><span>${fmtDate(a.audit_date)}</span>` : S.view === "users" ? `<span>›</span><b>Utilizadores</b>` : ""}</div>
       <div class="spacer"></div>
       ${a ? tabsHTML(a) : ""}

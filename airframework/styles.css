@@ -257,3 +257,5 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
 .topbar .btn.ghost{border:1px solid var(--hair-2)}
 .topbar .tabs{height:44px;align-items:center}
 .preview-banner .btn{border-radius:999px}
+a.logo{transition:opacity .15s}
+a.logo:hover{opacity:.8}
