@@ -1,0 +1,467 @@
+<meta charset="utf-8">
+<title>AIR MyForce Interativo</title>
+<style>
+/* Réplica fiel do deck MyForce_AIR_07Set_FINAL_1.pptx: 3 slides landscape 16:9 (1280×720, coordenadas do PPT a 96px/in),
+   escalados ao viewport; look único (slides brancos sobre tela escura, cores exatas do deck) */
+:root{
+  --canvas:#2B2926; --chrome:#1F1D1A; --chrome-ink:#EDEAE4; --gold:#C5A367;
+  --ink:#1A1A1A; --sub:#333333; --grey:#6B7280; --line:#D9D5CC;
+  --purple:#5B21B6; --purple-tint:#F2EFFC;
+  --v:#1D4ED8; --v-badge:#1A4DD5; --v-tint:#F5F9FF; --v-chip:#E3EBFB;
+  --l:#EA7A17; --l-badge:#E27615; --l-tint:#FFFAF2; --l-chip:#FBEEDC;
+  --c:#E11D48; --c-tint:#FFF5F7; --c-chip:#FBE3E9;
+  --s0:#E11D48; --s1:#F59E0B; --s2:#0F9D6B; --s-off:#E7E4DE;
+  --green:#0F9D6B; --green-tint:#F2FBF7;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--chrome-ink);font-family:Arial,Helvetica,sans-serif;font-size:14px}
+
+/* ---------- chrome ---------- */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--chrome);border-bottom:2px solid var(--gold)}
+.top-in{max-width:1320px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-weight:700;letter-spacing:.14em;font-size:16px;color:#fff}
+.brand small{display:block;font-weight:400;letter-spacing:.02em;font-size:10.5px;color:#A39B8D}
+nav.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{border:1px solid #4A463F;background:transparent;color:var(--chrome-ink);font:inherit;font-weight:600;font-size:13px;padding:7px 13px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.tab .n{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:#4A463F;font-size:11px;font-weight:700}
+.tab[aria-selected="true"]{background:#fff;color:var(--ink);border-color:#fff}
+.tab[aria-selected="true"] .n{background:var(--gold);color:var(--ink)}
+.score-pill{background:var(--purple-tint);color:var(--purple);border-radius:10px;padding:6px 12px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13px}
+
+/* ---------- slide stage ---------- */
+.window{display:none;padding:20px 12px 34px}
+.window.on{display:block}
+.stage-wrap{margin:0 auto;position:relative}
+.stage{transform-origin:top left;position:absolute;top:0;left:0}
+.slide{width:1280px;height:720px;background:#fff;color:var(--ink);position:relative;box-shadow:0 18px 50px rgba(0,0,0,.55);border-radius:4px;overflow:hidden}
+.slide .abs{position:absolute}
+
+/* header dos slides 1/3 */
+.sl-title{font-size:28px;font-weight:700;line-height:1.05}
+.sl-sub{font-size:12px;color:var(--sub);margin-top:3px}
+.sl-meta{font-size:12.5px;font-weight:700;margin-top:4px}
+.uzer{font-size:28px;font-weight:700;letter-spacing:.06em}
+.airchip{background:var(--purple-tint);color:var(--purple);font-size:14px;font-weight:700;border-radius:9px;padding:6px 14px;font-variant-numeric:tabular-nums}
+.camada{left:38px;top:88px;width:1204px;height:54px;background:var(--purple-tint);border:1px solid #E2DBF5;border-radius:10px;text-align:center;padding-top:5px}
+.camada b{color:var(--purple);font-size:12.5px}
+.camada .models{color:var(--purple);font-size:11px;font-weight:600;margin-top:1px}
+.camada .note{color:#7A6FA0;font-size:9.5px;font-style:italic;margin-top:1px}
+.arrow{top:140px;font-size:15px;color:var(--grey);font-weight:700}
+
+/* pilares */
+.pillar{top:159px;width:404px;height:374px;border-radius:12px;padding:9px 13px 8px}
+.pillar.v{left:38px;background:var(--v-tint);border:1.5px solid var(--v)}
+.pillar.l{left:443px;background:var(--l-tint);border:1.5px solid var(--l)}
+.pillar.c{left:847px;width:395px;background:var(--c-tint);border:1.5px solid var(--c)}
+.pillar .kicker{font-size:9.5px;font-weight:700}
+.pillar.v .kicker,.pillar.v h2{color:var(--v)}
+.pillar.l .kicker,.pillar.l h2{color:var(--l)}
+.pillar.c .kicker,.pillar.c h2{color:var(--c)}
+.pillar h2{margin:0;font-size:19px;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.pillar h2 .pscore{margin-left:auto;font-size:12px;padding:2px 9px;border-radius:999px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pillar.v .pscore{background:var(--v-chip)}
+.pillar.l .pscore{background:var(--l-chip)}
+.pillar.c .pscore{background:var(--c-chip)}
+.sec-t{font-size:9px;font-weight:700;letter-spacing:.05em;margin-top:7px}
+.pillar.v .sec-t{color:var(--v)} .pillar.l .sec-t{color:var(--l)} .pillar.c .sec-t{color:var(--c)}
+.sec-q{font-size:8.5px;color:var(--grey);font-style:italic}
+.sub-t{font-size:8px;font-weight:700;letter-spacing:.04em;color:var(--grey);margin-top:5px}
+.crit{display:flex;align-items:flex-start;gap:6px;padding:2px 3px;margin:0 -3px;border-radius:6px}
+.crit .id{flex:0 0 auto;width:26px;height:14px;border-radius:4px;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-top:1px}
+.pillar.v .id{background:var(--v)} .pillar.l .id{background:var(--l)} .pillar.c .id{background:var(--c)}
+.crit .txt{flex:1;min-width:0;font-size:9.5px;line-height:1.16}
+.crit .dots{flex:0 0 auto;display:flex;gap:4px;margin-top:3px}
+.crit .dots i{width:8px;height:8px;border-radius:50%;background:var(--s-off)}
+.crit .dots i.s0{background:var(--s0)} .crit .dots i.s1{background:var(--s1)} .crit .dots i.s2{background:var(--s2)}
+.crit.click{cursor:pointer;transition:background .12s}
+.crit.click:hover,.crit.click:focus-visible{background:#fff;outline:1px solid var(--gold)}
+
+/* faixa legenda + fórmula */
+.band{left:38px;top:541px;width:1204px;height:44px;border:1px solid var(--line);border-radius:9px;padding:5px 20px 0}
+.band-row{display:flex;gap:26px;align-items:center;font-size:10.5px}
+.band .dotk{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.band .dotk i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.band .formula{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;font-size:11px}
+.band .regra{font-size:8.6px;color:var(--grey);margin-top:3px}
+.medicao{left:38px;top:595px;width:1204px;height:92px;background:var(--green-tint);border:1.5px solid var(--green);border-radius:12px;padding:7px 21px}
+.medicao .kicker{color:var(--green);font-size:9px;font-weight:700}
+.medicao h3{margin:0 0 3px;font-size:15px;letter-spacing:.02em;display:inline-block;padding-right:14px}
+.medicao .cols{display:flex;gap:28px}
+.medicao .col{flex:1;min-width:0}
+.medicao h4{margin:0 0 1px;font-size:9px;letter-spacing:.03em;color:var(--green)}
+.medicao h4 span{color:var(--grey);font-weight:400}
+.medicao ul{margin:0;padding-left:0;list-style:none;font-size:9px;color:var(--ink);columns:2;column-gap:18px}
+.medicao li{margin:1px 0}
+.medicao li::before{content:"• "}
+.credit{left:0;top:694px;width:1280px;text-align:center;font-size:9px;color:var(--grey)}
+
+/* slide 2 */
+.badge{width:255px;height:54px;border-radius:14px;color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+.s2p{font-size:21.3px;line-height:1.27;color:var(--ink)}
+
+/* dica sob o slide */
+.hint{max-width:1320px;margin:12px auto 0;text-align:center;font-size:12.5px;color:#A39B8D}
+.hint b{color:var(--gold)}
+
+/* ---------- painel de evidência ---------- */
+.veil{position:fixed;inset:0;background:rgba(15,13,10,.55);z-index:80;display:none}
+.veil.on{display:block}
+.panel{position:fixed;z-index:90;left:50%;top:50%;transform:translate(-50%,-50%);width:min(680px,calc(100vw - 24px));max-height:min(84vh,700px);overflow:auto;background:#fff;color:var(--ink);border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.5);display:none}
+.panel.on{display:block}
+@media (max-width:560px){.panel{top:auto;bottom:0;transform:translate(-50%,0);border-radius:14px 14px 0 0;max-height:88vh;padding-bottom:env(safe-area-inset-bottom,0px)}}
+.panel-head{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;gap:10px;align-items:flex-start}
+.panel-head .id{width:38px;height:24px;border-radius:6px;color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px}
+.panel-head .id.v{background:var(--v)} .panel-head .id.l{background:var(--l)} .panel-head .id.c{background:var(--c)}
+.panel-head h3{margin:0;font-size:14.5px;line-height:1.35;flex:1;min-width:0;text-wrap:balance}
+.panel-head .x{border:none;background:#EAE6DE;color:var(--ink);width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;flex:0 0 auto;line-height:1}
+.panel-body{padding:14px 18px 16px}
+.spill{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:999px;margin-bottom:12px}
+.spill i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.spill.s0{background:var(--c-chip);color:var(--s0)} .spill.s0 i{background:var(--s0)}
+.spill.s1{background:#FDF0D9;color:#B0741A} .spill.s1 i{background:var(--s1)}
+.spill.s2{background:#DFF5EB;color:var(--s2)} .spill.s2 i{background:var(--s2)}
+.pb-sec{margin-bottom:13px}
+.pb-sec h4{margin:0 0 4px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8A6D3B}
+.pb-sec p{margin:0;font-size:13px;line-height:1.45}
+.srcs{display:flex;flex-wrap:wrap;gap:6px}
+.srcs a,.srcs span{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:3px 11px;text-decoration:none;color:var(--ink);background:#F7F5F1}
+.srcs a:hover{border-color:var(--gold)}
+.quote{border-left:3px solid var(--gold);background:#F7F5F1;border-radius:0 9px 9px 0;padding:9px 13px;font-size:12.5px;font-style:italic;line-height:1.45}
+.panel-foot{border-top:1px solid var(--line);padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.panel-foot a.prova{font-weight:700;font-size:13px;color:#8A6D3B;text-decoration:none;border:1.5px solid var(--gold);border-radius:999px;padding:7px 16px}
+.panel-foot a.prova:hover{background:var(--gold);color:#1A1A1A}
+.panel-foot .hint2{font-size:11px;color:var(--grey)}
+@media (prefers-reduced-motion: no-preference){
+  .panel.on{animation:pop .16s ease-out}
+  @keyframes pop{from{opacity:0;transform:translate(-50%,calc(-50% + 8px))}to{opacity:1;transform:translate(-50%,-50%)}}
+}
+</style>
+
+<header class="top"><div class="top-in">
+  <div class="brand">UZER<small>AIR — AI Readiness Score · V10 · MyForce · 07/09/2026</small></div>
+  <nav class="tabs" role="tablist" aria-label="Slides">
+    <button class="tab" role="tab" aria-selected="true" data-w="w1"><span class="n">1</span>Framework V10</button>
+    <button class="tab" role="tab" aria-selected="false" data-w="w2"><span class="n">2</span>Resumo Executivo</button>
+    <button class="tab" role="tab" aria-selected="false" data-w="w3"><span class="n">3</span>Diagnóstico MyForce</button>
+  </nav>
+  <div class="score-pill">AIR MyForce: 68,5 / 100</div>
+</div></header>
+
+<!-- ============ 1 · FRAMEWORK ============ -->
+<section id="w1" class="window on">
+  <div class="stage-wrap"><div class="stage"><div class="slide" id="slide1"></div></div></div>
+</section>
+
+<!-- ============ 2 · RESUMO ============ -->
+<section id="w2" class="window">
+  <div class="stage-wrap"><div class="stage"><div class="slide" id="slide2"></div></div></div>
+</section>
+
+<!-- ============ 3 · DIAGNÓSTICO ============ -->
+<section id="w3" class="window">
+  <div class="stage-wrap"><div class="stage"><div class="slide" id="slide3"></div></div></div>
+  <p class="hint"><b>Clique em qualquer critério</b> (V1, L1, C7…) para abrir a evidência: racional, fontes e citações exatas.</p>
+</section>
+
+<div class="veil" id="veil"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title"></aside>
+
+<script>
+const EXPLORER = "https://claude.ai/code/artifact/5c8be92a-ff63-4f8f-8b56-70744777d63f";
+const LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAF3CAYAAAB5dDWiAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA0NpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmExY2QxMmY0MSwgMjAyNC8xMS8wOC0xNjowOToyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI2LjQgKDIwMjUwMTI2Lm0uMjk1NSA5NjZlZWM2KSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MDhEOUYyOTRENjZCMTFFRjlGQzlGMzE4NkQzMjYzOUEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MDhEOUYyOTVENjZCMTFFRjlGQzlGMzE4NkQzMjYzOUEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowOEQ5RjI5MkQ2NkIxMUVGOUZDOUYzMTg2RDMyNjM5QSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowOEQ5RjI5M0Q2NkIxMUVGOUZDOUYzMTg2RDMyNjM5QSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pv5qmuQAADWnSURBVHja7N0HeFRVwv/xSU9mMpmShJbeqNJFmnVd3XVXbIhYCIKEUBRkZd1X38Wyr7vrqu+uIEgTFAUUBLuiiIigUqQjnbRJQgLJ1IRkkkn734vu+1eWMjc50+L38zw+weTeO3du/d1zzj0nqKWlRQUAAABxgtkEAAAABCwAAAACFgAAAAELAAAABCwAAAACFgAAAAELAAAABCwAAAACFgAAAAELAAAABCwAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAIGABAACAgAUAAEDAAgAAIGABAACAgAUAAEDAAgAAIGABAACAgAUAAEDAAgAAIGABAACAgAUAAEDAAgAAIGABAAAQsAAAAEDAAgAAIGABAAAQsAAAAEDAAgAAIGABAAAQsAAAAEDAAgAAIGABAAAQsAAAAAhYAAAAIGABAAAQsAAAAAhYAAAAIGABAAAQsAAAAAhYAAAAIGABAAAQsAAAAAhYAAAAIGABAAAQsAAAAAhYAAAABCwAAAAQsAAAAAhYAAAABCwAAAAQsAAAAAhYAAAABCwAAAAQsAAAAAhYAAAABCwAAAAQsAAAAAhYAAAABCwAAAACFgAAAAhYAAAABCwAAAACFgAAAAhYAAAABCwAAAACFgAAAAhYAAAABCwAAAACFgAAAAhYAAAABCwAAAACFgAAAAELAAAABCwAAAACFgAAAAELAAAABCwAAAACFgAAAAELAAAABCwAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAAACFgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAAAELAACAgAUAAEDAAgAAIGABAACAgAUAAEDAAgAAIGABAABAiVA2AQAl7s55KOSyytP6NKtVl2azR8fW1UVpmxrCpD+FSP8Fefrz9xvjT9+0+9sj7AkABCwAAS93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";
+const SCORE_NAMES = ["Inexistente · 0","Iniciado · 1","Consolidado · 2"];
+
+const PILLARS = [
+  {k:"v", kicker:"O que permite à IA encontrar a marca", name:"VISIBILIDADE", score:"16/20",
+   secs:[
+     {t:"CANAIS COM LEITURA DIRETA POR IA", q:"(que canais públicos tornam a marca encontrável pela AI?)", subs:[
+       {t:"CANAIS PRÓPRIOS (ativáveis pela marca)", ids:["V1","V2","V3"]},
+       {t:"CANAIS EXTERNOS (ativáveis pela marca)", ids:["V4","V5","V6","V7","V8"]}]},
+     {t:"ÍNDICES DOS ASSISTENTES E CANAIS PAGOS", q:"(onde a IA pesquisa de facto; e o que amplifica os sinais de marca)", subs:[
+       {t:"", ids:["V9","V10"]}]}]},
+  {k:"l", kicker:"O que permite à IA compreender a marca", name:"LEGIBILIDADE", score:"13/20",
+   secs:[
+     {t:"IDENTIDADE & ENTIDADE", q:"(a IA sabe quem é a marca, o que faz e onde atua?)", subs:[{t:"", ids:["L1","L2","L3","L4","L5"]}]},
+     {t:"ESTRUTURA & CONTEÚDO LEGÍVEL", q:"(a informação está organizada para a IA interpretar corretamente a marca?)", subs:[{t:"", ids:["L6","L7","L8","L9","L10"]}]}]},
+  {k:"c", kicker:"O que permite à IA confiar na marca", name:"CREDIBILIDADE", score:"12/20",
+   secs:[
+     {t:"AUTORIDADE EXTERNA", q:"(quem valida a marca institucionalmente?)", subs:[{t:"", ids:["C1","C2","C3","C4"]}]},
+     {t:"PROVA SOCIAL & CONSENSO", q:"(os clientes e comunidades confirmam a marca?)", subs:[{t:"", ids:["C5","C6","C7","C8","C9","C10"]}]}]}
+];
+
+const D = {
+V1:{s:2,label:"Páginas por serviço, localização e intenção em forma de pergunta, com FAQ e guias",
+ rac:"24 páginas de serviço, 92 de oficina e 34 de cidade, com títulos-pergunta generalizados (baterias 18/22 headings, travões 16/24, ROF 14/17) e FAQs em texto na maioria dos serviços.",
+ src:["myforce.pt","myforce.pt/sitemap"],
+ cit:"Sitemap com 3.479 URLs; H2 «Quando mudar o óleo do carro?», «Quanto custa a mudança de óleo na MyForce»"},
+V2:{s:1,label:"Landing pages públicas, permanentes e indexáveis de campanhas",
+ rac:"Páginas permanentes de oferta (Clube MyForce, check-up gratuito, soluções de pagamento), mas sem landing pages indexáveis de campanhas sazonais no sitemap.",
+ src:["myforce.pt"],
+ cit:"/clube-myforce, /check-up-automovel-gratuito; pesquisa «campanha/promo» no sitemap: 0 URLs"},
+V3:{s:2,label:"Conteúdo editorial nos formatos que a IA cita: listas, guias, comparativos, how-to",
+ rac:"Blog com 48 artigos nos formatos citados pela IA (listas, guias, comparativos, how-to) + glossário ABC com 239 termos. Nota: remover «Artigo de Teste BV» publicado em produção.",
+ src:["myforce.pt/tudo-sobre-carros","myforce.pt/glossario-abc-myforce"],
+ cit:"«10 coisas que deve verificar antes de viajar»; «Escovas Limpa Para-Brisas — Um Guia Completo»; 239 ListItem"},
+V4:{s:2,label:"Diretórios, marketplaces e perfis locais públicos (Google Business/Maps)",
+ rac:"Perfis Google Business ativos à escala da rede, com ratings refletidos no schema do site; presença em Infobel, Portal da Queixa e diretórios de empresas.",
+ src:["myforce.pt","infobel.com","portaldaqueixa.com"],
+ cit:"Alameda 4,4 · Francos 4,6 · Benfica 4,3 · Faro 4,2 (ratingValue por oficina)"},
+V5:{s:1,label:"Conteúdo patrocinado em media indexáveis",
+ rac:"Cobertura recorrente e indexável na imprensa do setor (Pós-Venda, Business Portugal — formato tipicamente branded), mas nada em media generalista.",
+ src:["posvenda.pt","revistabusinessportugal.pt"],
+ cit:"«MyForce reforça rede nacional de oficinas com cinco novas aberturas em 2025»"},
+V6:{s:2,label:"Páginas de parceiros/campanhas conjuntas indexáveis",
+ rac:"Ecossistema amplo de parcerias indexáveis em domínios com autoridade: Santander, N Seguros, Galp, Banco Best, Montepio, Crédito Agrícola, Glovo.",
+ src:["santander.pt","montepio.org","creditoagricola.pt","galp.com","glovoapp.com"],
+ cit:"santander.pt/descontos/myforce; riderhub.glovoapp.com/pt/blog/oficinas-myforce"},
+V7:{s:1,label:"YouTube/podcasts com descrição e transcrição",
+ rac:"Canal YouTube existe mas sem evidência de biblioteca ativa, descrições ricas ou transcrições; nenhum podcast da marca; YouTube ausente do sameAs do site.",
+ src:["youtube.com/@oficinasmyforce"],
+ cit:"Canal «Oficinas MyForce» localizado; sem métricas verificáveis (consent wall)"},
+V8:{s:2,label:"Conteúdo social público, persistente e citável",
+ rac:"Quatro plataformas públicas com atividade recente: Facebook ~34,0 mil gostos, Instagram ~5,0 mil seguidores/909 publicações, TikTok com vídeos de 2026, LinkedIn.",
+ src:["facebook.com","instagram.com","tiktok.com","linkedin.com"],
+ cit:"sameAs no Organization schema liga FB/IG/LinkedIn/TikTok"},
+V9:{s:2,label:"Presença no top 10 dos índices dos assistentes (Brave, Bing...) para queries da categoria",
+ rac:"Top 10 em 4/5 queries testadas nos índices dos assistentes; 3.º no Brave em «revisão carro preço Portugal», à frente de Midas e Norauto. Alerta: oficinasmforce.pt legado ainda indexado (5.º).",
+ src:["search.brave.com","bing.com"],
+ cit:"Bing «oficina automóvel Portugal»: 6.º · Brave «melhor rede de oficinas Portugal»: 4.º"},
+V10:{s:1,label:"Canais pagos com impacto indireto: ads, influencers/creators, display e retargeting",
+ rac:"Sinais indiretos de social pago (campanhas promovidas, hashtags de alcance), mas sem search ads observados nas SERPs nem creators; Meta Ad Library inacessível para confirmação.",
+ src:["posvenda.pt","portaldaqueixa.com"],
+ cit:"Estágios 2026 «promovida nos canais digitais da marca» (Pós-Venda)"},
+L1:{s:1,label:"Nome, categoria e descrição semanticamente consistentes em todas as fontes",
+ rac:"«Rede de oficinas automóvel» consistente no site e media recente, mas legado MForce vivo: oficinasmforce.pt no top 10 Brave, Trustpilot antigo, diretórios com «mforce-alameda».",
+ src:["posvenda.pt","guiaempresas.pt","search.brave.com"],
+ cit:"«Mforce dá lugar a MyForce» (Pós-Venda); guiaempresas.pt lista «mforce-alameda»"},
+L2:{s:2,label:"Moradas, contactos, horários e áreas de atuação claros",
+ rac:"Cada página de oficina publica morada, telefone e horários por dia, com PostalAddress e GeoCoordinates em schema; Organization com sede e contactPoint.",
+ src:["myforce.pt/oficinas-auto"],
+ cit:"AutoRepair schema com PostalAddress + GeoCoordinates na MyForce Alameda"},
+L3:{s:1,label:"Perfis oficiais ligados e consistentes entre site, Google Business, redes e diretórios",
+ rac:"Melhoria recente: sameAs no Organization (Facebook, Instagram, LinkedIn, TikTok). Faltam YouTube no sameAs e ligação das páginas de oficina ao respetivo Google Business (sem sameAs/hasMap).",
+ src:["myforce.pt (JSON-LD)"],
+ cit:"sameAs = [facebook, instagram, linkedin, tiktok, whatsapp]; páginas de oficina sem sameAs"},
+L4:{s:1,label:"Páginas essenciais: Sobre, Serviços, Localizações e FAQ",
+ rac:"Sobre (/quem-somos), Serviços e Localizações sólidas; falta página FAQ global — as FAQs vivem dispersas por página de serviço e num artigo de blog.",
+ src:["myforce.pt"],
+ cit:"Sitemap sem /faq ou /perguntas-frequentes global"},
+L5:{s:1,label:"Presença em bases de conhecimento (Wikidata, Wikipedia, Knowledge Panels...)",
+ rac:"Sem entidade Wikidata (pesquisa PT/EN: 0 resultados) nem Wikipedia; knowledge panels locais existem via Google Business. A Norauto tem Wikidata (Q3317698).",
+ src:["wikidata.org (API)"],
+ cit:"wbsearchentities «MyForce» pt/en: sem entidade da marca"},
+L6:{s:1,label:"Dados estruturados/schema que identificam organização, serviços, FAQs, artigos e localizações",
+ rac:"Salto desde julho mas incompleto: AutoRepair+AggregateRating+OfferCatalog (11 Offers) nas oficinas e 27 Services no catálogo; porém FAQPage só em 3/24 serviços, ratingValue sem ratingCount, sem openingHoursSpecification; ROF sem FAQPage apesar de ter FAQs em texto.",
+ src:["myforce.pt (JSON-LD)"],
+ cit:"FAQPage: ar-condicionado 9 Qs · baterias 12 · alinhar direção 5; Alameda ratingValue 4.4 sem ratingCount"},
+L7:{s:2,label:"Texto principal em HTML indexável, não escondido em JS",
+ rac:"Conteúdo server-rendered: um fetch sem JavaScript devolve texto integral, headings, FAQs e schema em todas as páginas testadas (24 serviços + 5 oficinas + home).",
+ src:["myforce.pt"],
+ cit:"curl devolve HTML completo com schema em todas as páginas"},
+L8:{s:1,label:"Blocos de resposta («capsules»): 40–60 palavras no topo de cada página",
+ rac:"A ROF abre com bloco answer-first mas ~120 palavras (janela é 40–60); maioria das páginas sem cápsula formatada; respostas FAQ curtas demais (mediana 12–13 palavras).",
+ src:["myforce.pt (FAQPage JSON-LD)"],
+ cit:"Palavras por resposta: AC [10,10,12,17,6,10,13,10,31] · Baterias [22,18,13,9,12,...,41]"},
+L9:{s:2,label:"Acesso dos crawlers de IA verificado nos logs: robots.txt e WAF/CDN",
+ rac:"robots.txt permite explicitamente GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, ClaudeBot e anthropic-ai (CCBot bloqueado por opção); UAs de bots IA recebem HTTP 200. Confirmar nos logs do servidor (WAF intermitente em 3 set).",
+ src:["myforce.pt/robots.txt"],
+ cit:"Secção «CRAWLERS DE IA — PERMITIR EXPLICITAMENTE»; GPTBot/ClaudeBot/PerplexityBot → 200"},
+L10:{s:1,label:"Sitemap, metadados e headings claros",
+ rac:"Sitemap real funciona mas /sitemap.xml (caminho standard) devolve página HTML noindex; meta description da ROF é legada («Pacotes de Manutenção»); og:description vazio; descriptions não answer-first.",
+ src:["myforce.pt"],
+ cit:"Meta ROF ≠ título «Revisão Carro Mudança de Óleo e Filtro»; og:description content=''"},
+C1:{s:1,label:"Imprensa generalista e publicações especializadas",
+ rac:"Cobertura sólida e contínua na imprensa especializada de pós-venda/frotas (Pós-Venda, Fleet Magazine, Jornal das Oficinas); ausência total de media generalista.",
+ src:["posvenda.pt","fleetmagazine.pt"],
+ cit:"«MyForce com cinco novas oficinas em 2025»; «MyForce dinamiza Programa de Estágios de Verão 2026»"},
+C2:{s:1,label:"Rankings, listas «melhores de» e comparativos de terceiros; diretórios setoriais",
+ rac:"Listada pela CGIP entre «as maiores redes de oficinas independentes em Portugal» (com Norauto, Midas, Bosch); não lidera comparativos independentes nem figura em rankings «melhores de» recentes.",
+ src:["cgip.pt","guiaempresas.pt"],
+ cit:"No estudo CGIP «melhores oficinas 2022», a Norauto venceu 15/17 critérios"},
+C3:{s:1,label:"Podcasts, entrevistas e artigos com transcrição pública",
+ rac:"Duas entrevistas escritas a responsáveis (Bruno Batista, Pedro Cunha) num único órgão especializado; zero presença em podcasts ou vídeo-entrevistas.",
+ src:["posvenda.pt"],
+ cit:"«Queremos chegar aos 100 centros próprios» — Bruno Batista, Diretor de Operações"},
+C4:{s:2,label:"Parcerias, associações, prémios e certificações públicas",
+ rac:"Prémios de consumidor recorrentes 2023–2026 (Cinco Estrelas, Escolha do Consumidor, Marca Recomendada, «Marca do Mês» ago 2026 no Portal da Queixa) e parcerias verificáveis com Galp, Santander, Montepio, Crédito Agrícola.",
+ src:["myforce.pt/premios-myforce","portaldaqueixa.com"],
+ cit:"Selos «O Cliente Confia» e «Marca Recomendada 2026» no Portal da Queixa"},
+C5:{s:2,label:"Reviews em plataformas públicas relevantes para o setor (Google Reviews, Facebook, diretórios locais, Portal da Queixa, etc)",
+ rac:"Volume real multi-plataforma: Google 4,2–4,6 por oficina (Alameda com 140 avaliações); Portal da Queixa com Índice de Satisfação 75,8/100 («Ótimo»). Ponto fraco não gerido: Trustpilot 2,6/5 (15 avaliações).",
+ src:["portaldaqueixa.com","pt.trustpilot.com","guiaempresas.pt"],
+ cit:"Portal da Queixa 75,8/100; Trustpilot 2,6/5 com 73% de 1 estrela"},
+C6:{s:1,label:"Testemunhos, casos de estudo e clientes verificáveis",
+ rac:"Clientes/parceiros B2B verificáveis em sites de terceiros (Glovo recomenda oficialmente aos estafetas; Galp Frota Business integra a rede), mas sem casos de estudo formais publicados.",
+ src:["riderhub.glovoapp.com","galp.com"],
+ cit:"Glovo Rider Hub recomenda as oficinas MyForce aos estafetas"},
+C7:{s:0,label:"Menções em comunidades públicas (Reddit, Quora, fóruns), ponderadas pelo motor-alvo",
+ rac:"Zero menções encontradas em Reddit, Quora ou fóruns automóveis portugueses — o gap mais crítico para assistentes que ponderam fortemente comunidades (ChatGPT/Perplexity).",
+ src:["reddit.com","fóruns PT (pesquisas)"],
+ cit:"«myforce reddit», «site:reddit.com myforce oficina»: 0 resultados"},
+C8:{s:0,label:"Recomendações orgânicas de especialistas, creators e clientes",
+ rac:"Sem vídeos de youtubers auto PT nem reviews em blogs independentes; todo o conteúdo «recomendação» localizado é institucional ou contratual (parcerias), não orgânico.",
+ src:["youtube.com","blogs auto PT (pesquisas)"],
+ cit:"Pesquisas por creators com conteúdo MyForce: 0 resultados orgânicos"},
+C9:{s:2,label:"Gestão e resposta a avaliações negativas",
+ rac:"Gestão exemplar no canal dominante: Portal da Queixa com 100% de resposta, 100% de solução e <24h; lacuna marginal no Trustpilot (sem respostas, 15 reviews).",
+ src:["portaldaqueixa.com","pt.trustpilot.com"],
+ cit:"Reclamações marcadas «Resolvida»; Trustpilot assinala «Não respondeu a opiniões negativas»"},
+C10:{s:2,label:"Atualidade, recência e consistência das menções — ciclos de treino",
+ rac:"Fluxo contínuo 2025–2026: aberturas de oficinas, estágios de verão 2026, «Marca do Mês» agosto 2026, reviews e reclamações respondidas até agosto 2026 — repetição sustentada que fixa a marca nos ciclos de treino.",
+ src:["posvenda.pt","fleetmagazine.pt","portaldaqueixa.com"],
+ cit:"Menções datadas de 2025 e 2026 em 4 plataformas distintas"}
+};
+
+/* ---------- construção dos slides ---------- */
+function critRow(id, scored){
+  const d = D[id];
+  const dots = [0,1,2].map(i=>`<i class="${scored && i===d.s ? 's'+d.s : ''}"></i>`).join('');
+  const cls = scored ? 'crit click' : 'crit';
+  const attrs = scored ? ` tabindex="0" role="button" data-id="${id}" aria-haspopup="dialog"` : '';
+  return `<div class="${cls}"${attrs}><span class="id">${id}</span><span class="txt">${d.label}</span><span class="dots">${dots}</span></div>`;
+}
+function pillarsHTML(scored){
+  return PILLARS.map(p=>{
+    const secs = p.secs.map(s=>`
+      <div class="sec-t">${s.t}</div><div class="sec-q">${s.q}</div>
+      ${s.subs.map(sub=>`${sub.t?`<div class="sub-t">${sub.t}</div>`:''}${sub.ids.map(id=>critRow(id,scored)).join('')}`).join('')}`).join('');
+    return `<div class="abs pillar ${p.k}">
+      <div class="kicker">${p.kicker}</div>
+      <h2>${p.name}${scored?`<span class="pscore">${p.score}</span>`:''}</h2>
+      ${secs}</div>`;
+  }).join('');
+}
+function camadaHTML(){
+  return `<div class="abs camada">
+    <b>CAMADA IA — A camada de leitura e interpretação que atravessa toda a cadeia digital</b>
+    <div class="models">ChatGPT · Perplexity · Gemini · Claude · Copilot · Google AI Mode · AI Overviews</div>
+    <div class="note">O AIR mede prontidão de resposta transversal para visibilidade em IA; não prevê diretamente a probabilidade de citação num modelo específico</div>
+  </div>
+  <div class="abs arrow" style="left:225px">↓</div>
+  <div class="abs arrow" style="left:625px">↓</div>
+  <div class="abs arrow" style="left:1025px">↓</div>`;
+}
+function medicaoHTML(){
+  return `<div class="abs medicao">
+    <span class="kicker">O que permite à marca melhorar a sua presença em IA&nbsp;&nbsp;</span><h3>MEDIÇÃO &amp; ITERAÇÃO</h3>
+    <div class="cols">
+      <div class="col"><h4>MONITORIZAÇÃO DAS RESPOSTAS <span>(a IA encontra, compreende e confia na marca?)</span></h4>
+        <ul><li>Testes repetidos com painel fixo de prompts, modelos e datas</li><li>Presença por perguntas-alvo, categoria, serviço e localização</li><li>Fontes citadas pela IA e qualidade das menções</li><li>Sentimento, posicionamento e erros ou alucinações</li></ul></div>
+      <div class="col"><h4>SISTEMA DE MELHORIA <span>(que ações corrigem os gaps encontrados?)</span></h4>
+        <ul><li>Dashboard por Visibilidade, Legibilidade e Credibilidade</li><li>Backlog priorizado por impacto, esforço e owner</li><li>Sprints mensais de conteúdo, estrutura técnica e autoridade externa</li><li>Relatório com evolução vs concorrentes e próximos testes</li></ul></div>
+    </div>
+  </div>`;
+}
+function legendHTML(formula, regra){
+  return `<div class="abs band">
+    <div class="band-row">
+      <span class="dotk"><i style="background:var(--s0)"></i>Encarnado: Inexistente (0 pts)</span>
+      <span class="dotk"><i style="background:var(--s1)"></i>Amarelo: Iniciado (1 pt)</span>
+      <span class="dotk"><i style="background:var(--s2)"></i>Verde: Consolidado (2 pts)</span>
+      <span class="formula">${formula}</span>
+    </div>
+    <div class="regra">${regra}</div>
+  </div>`;
+}
+
+const REGRA = "Regra de leitura: Visibilidade mede existência/acessibilidade do ativo; Credibilidade mede independência e força da validação externa. Cada dimensão = 10 critérios × 0–2 pts.";
+
+document.getElementById('slide1').innerHTML = `
+  <div class="abs" style="left:38px;top:10px">
+    <div class="sl-title">AIR - AI Readiness Score · V10</div>
+    <div class="sl-sub">Como preparar uma marca para ser incluída nas respostas finais da IA</div>
+  </div>
+  <div class="abs uzer" style="right:38px;top:10px">UZER</div>
+  ${camadaHTML()}
+  ${pillarsHTML(false)}
+  ${legendHTML("AIR Score (ponderação-base v1) = 35 × (V/20) + 30 × (L/20) + 35 × (C/20)&nbsp; →&nbsp; 0–100", REGRA)}
+  ${medicaoHTML()}
+  <div class="abs credit">Modelo proprietário UZER CONSULTING · critérios V1–V10 · L1–L10 · C1–C10 · AIR Framework V10 (set 2026) — consolida a V8 (jul 2026) e a revisão V9 (ago 2026)</div>`;
+
+document.getElementById('slide2').innerHTML = `
+  <img class="abs" src="${LOGO}" alt="MyForce" style="left:22px;top:-31px;width:387px;height:241px">
+  <div class="abs uzer" style="right:38px;top:14px">UZER</div>
+  <div class="abs badge" style="left:62px;top:146px;background:var(--v-badge)">Visibilidade</div>
+  <div class="abs s2p" style="left:58px;top:199px;width:1068px">A MyForce mantém uma presença forte e encontrável: arquitetura de 3.479 URLs com títulos-pergunta, 92 oficinas no Google Business, parcerias indexáveis (Santander, Galp, Montepio, Glovo) e — no critério novo do V10 — top 10 nos índices que os assistentes realmente usam (3.º no Brave em «revisão carro preço»). Gaps: YouTube parado, campanhas sem landing pages e canais pagos sem evidência verificável.</div>
+  <div class="abs badge" style="left:67px;top:324px;background:var(--l-badge)">Legibilidade</div>
+  <div class="abs s2p" style="left:61px;top:379px;width:1098px">A infraestrutura técnica continua exemplar (HTML server-rendered, robots.txt pró-IA com bots a receber 200) e o schema deu um salto desde julho: AutoRepair+Offers nas oficinas, FAQPage em 3 serviços, sameAs no Organization. Mas a régua V10 expõe o défice de entidade: sem Wikidata/Wikipedia, legado MForce ainda indexado, cápsulas fora da janela 40–60 e FAQPage em apenas 3 de 24 serviços.</div>
+  <div class="abs badge" style="left:67px;top:503px;background:var(--c)">Credibilidade</div>
+  <div class="abs s2p" style="left:60px;top:564px;width:1127px">Continua o pilar com maior potencial e maior gap: prémios recorrentes 2023–2026, reviews fortes e gestão exemplar no Portal da Queixa (100% resposta) — mas dois zeros exatamente onde a memória dos modelos mais se constrói: comunidades (Reddit/fóruns) e recomendações orgânicas de creators. Earned media fora do nicho pós-venda é a alavanca n.º 1.</div>`;
+
+document.getElementById('slide3').innerHTML = `
+  <div class="abs" style="left:38px;top:8px">
+    <div class="sl-title">AIR - AI Readiness Score</div>
+    <div class="sl-sub">Como preparar uma marca para ser incluída nas respostas finais da IA</div>
+    <div class="sl-meta">Diagnóstico: Oficinas MyForce Portugal · 07/09/2026 · Framework V10</div>
+  </div>
+  <div class="abs uzer" style="right:38px;top:8px">UZER</div>
+  <div class="abs airchip" style="right:38px;top:48px">AIR MyForce: 68,5 / 100</div>
+  ${camadaHTML()}
+  ${pillarsHTML(true)}
+  ${legendHTML("AIR MyForce = 35 × (16/20) + 30 × (13/20) + 35 × (12/20) = 28 + 19,5 + 21&nbsp; →&nbsp; 68,5 / 100",
+    REGRA + " Score auditado com evidência pública a 07/09/2026 (30/30 critérios verificados) — fontes, citações e screenshots em cada critério (clique) e no AIR Evidence Explorer.")}
+  ${medicaoHTML()}
+  <div class="abs credit">Modelo proprietário UZER CONSULTING · critérios V1–V10 · L1–L10 · C1–C10 alinhados com a Grelha de Pontuação AIR Score</div>`;
+
+/* ---------- escala ---------- */
+function fit(){
+  const f = Math.min(1,(document.documentElement.clientWidth-24)/1280);
+  document.querySelectorAll('.stage-wrap').forEach(w=>{
+    w.style.width=(1280*f)+'px'; w.style.height=(720*f)+'px';
+    w.querySelector('.stage').style.transform=`scale(${f})`;
+  });
+}
+addEventListener('resize',fit); fit();
+
+/* ---------- tabs ---------- */
+const tabs=[...document.querySelectorAll('.tab')];
+function showWindow(w){
+  tabs.forEach(t=>t.setAttribute('aria-selected', String(t.dataset.w===w)));
+  document.querySelectorAll('.window').forEach(s=>s.classList.toggle('on', s.id===w));
+  window.scrollTo({top:0});
+}
+tabs.forEach(t=>t.addEventListener('click',()=>{closePanel();showWindow(t.dataset.w);}));
+
+/* ---------- painel de evidência ---------- */
+const panel=document.getElementById('panel'), veil=document.getElementById('veil');
+function srcChip(s){
+  if(/[\s()]/.test(s)) return `<span>${s}</span>`;
+  return `<a href="https://${s}" target="_blank" rel="noopener">${s}</a>`;
+}
+function openPanel(id){
+  const d=D[id]; const pk=id[0].toLowerCase();
+  panel.innerHTML=`
+    <div class="panel-head">
+      <span class="id ${pk}">${id}</span>
+      <h3 id="panel-title">${d.label}</h3>
+      <button class="x" aria-label="Fechar">✕</button>
+    </div>
+    <div class="panel-body">
+      <span class="spill s${d.s}"><i></i>${SCORE_NAMES[d.s]}</span>
+      <div class="pb-sec"><h4>Racional</h4><p>${d.rac}</p></div>
+      <div class="pb-sec"><h4>Fontes consultadas</h4><div class="srcs">${d.src.map(srcChip).join('')}</div></div>
+      <div class="pb-sec"><h4>Citações-chave (extratos exatos)</h4><div class="quote">${d.cit}</div></div>
+    </div>
+    <div class="panel-foot">
+      <a class="prova" href="${EXPLORER}#${id}" target="_blank" rel="noopener">Ver prova no Evidence Explorer ↗</a>
+      <span class="hint2">screenshots e texto integral das fontes</span>
+    </div>`;
+  panel.querySelector('.x').addEventListener('click', closePanel);
+  veil.classList.add('on'); panel.classList.add('on');
+  panel.scrollTop=0; panel.querySelector('.x').focus({preventScroll:true});
+}
+function closePanel(){ veil.classList.remove('on'); panel.classList.remove('on'); }
+veil.addEventListener('click', closePanel);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePanel(); });
+document.getElementById('slide3').addEventListener('click', e=>{
+  const row=e.target.closest('.crit.click'); if(row) openPanel(row.dataset.id);
+});
+document.getElementById('slide3').addEventListener('keydown', e=>{
+  if(e.key!=='Enter'&&e.key!==' ') return;
+  const row=e.target.closest('.crit.click'); if(row){ e.preventDefault(); openPanel(row.dataset.id); }
+});
+
+/* deep link: #v1 … #c10 abre o diagnóstico + painel */
+const h=(location.hash||'').replace('#','').toUpperCase();
+if(/^[VLC](10|[1-9])$/.test(h) && D[h]){ showWindow('w3'); openPanel(h); }
+</script>
