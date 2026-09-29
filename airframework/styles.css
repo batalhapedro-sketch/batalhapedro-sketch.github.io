@@ -250,3 +250,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
 .tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 @media (max-width:700px){.topbar-in{padding:10px 16px;gap:10px}.tabs{order:10;flex:1 1 100%}.spacer{display:none}}
+/* barra de topo: todos os controlos em pílula, com a mesma altura das tabs */
+.topbar .btn,.topbar .tag,.topbar .score-pill,.topbar .select{border-radius:999px;height:36px;display:inline-flex;align-items:center;padding-block:0}
+.topbar .btn{padding-inline:16px;font-size:13px;font-weight:500}
+.topbar .tag{padding-inline:14px;font-size:12.5px}
+.topbar .btn.ghost{border:1px solid var(--hair-2)}
+.topbar .tabs{height:44px;align-items:center}
+.preview-banner .btn{border-radius:999px}

@@ -68,14 +68,16 @@ a{color:inherit;text-decoration:none}
 .hero-bg::after{content:"";position:absolute;width:620px;height:620px;right:8%;bottom:-320px;border-radius:50%;
   background:radial-gradient(closest-side,rgba(0,225,255,.32),transparent 70%);filter:blur(30px);animation:drift 22s ease-in-out infinite alternate-reverse}
 @keyframes drift{from{transform:translate(0,0)}to{transform:translate(-60px,40px)}}
-.bigz{position:absolute;right:max(-40px,calc(50% - 700px));top:50%;transform:translateY(-50%);width:min(560px,55vw);aspect-ratio:1410/1290;max-width:100%;pointer-events:none;opacity:.55;
-  background:var(--grad);-webkit-mask:url(assets/uzer-z.svg) center/contain no-repeat;mask:url(assets/uzer-z.svg) center/contain no-repeat}
-@media (max-width:900px){.bigz{opacity:.35;right:-80px;width:90vw}}
+.zlayer{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;will-change:transform}
+.snake{position:absolute;right:max(-40px,calc(50% - 700px));top:calc(50% - 7vh);transform:translateY(-50%);height:min(512px,50vw);width:auto;max-width:none;opacity:.6}
+@media (max-width:900px){.snake{opacity:.32;height:70vw;right:-60px}}
+.hero{z-index:2}.hero .wrap{z-index:3}
+main>section:not(.hero),main>.divider,footer{position:relative;z-index:2}
 .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hero .wrap{position:relative;z-index:2;width:100%}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);border-radius:999px;padding:7px 15px;background:rgba(255,255,255,.05);box-shadow:0 8px 24px -8px rgba(0,0,0,.8)}
 .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--g4);box-shadow:0 0 12px var(--g4)}
-.hero h1{margin:26px 0 22px;font-size:clamp(40px,7vw,86px);line-height:1.02;letter-spacing:-.045em;font-weight:600;max-width:13ch;text-wrap:balance}
+.hero h1{margin:0 0 22px;font-size:clamp(40px,7vw,86px);line-height:1.02;letter-spacing:-.045em;font-weight:600;max-width:13ch;text-wrap:balance}
 .hero p.lead{margin:0;max-width:56ch;color:var(--text-2);font-size:clamp(17px,1.5vw,19px);line-height:1.6}
 .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px}
 .hero-ctas .btn{padding:14px 24px;font-size:15px}
@@ -307,9 +309,93 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
 <main id="top">
   <section class="hero">
     <div class="hero-bg"><div class="grain"></div></div>
-    <div class="bigz" aria-hidden="true"></div>
+    <div class="zlayer" id="zlayer" aria-hidden="true">
+  <svg class="snake" viewBox="-2000 0 3410 1290" preserveAspectRatio="xMaxYMid meet">
+    <defs>
+      <linearGradient id="zg" gradientUnits="userSpaceOnUse" x1="-2000" y1="0" x2="1410" y2="1290">
+        <stop offset="0" stop-color="#262C3A" stop-opacity="0"/><stop offset=".35" stop-color="#3322FF"/><stop offset=".72" stop-color="#1A8CFF"/><stop offset="1" stop-color="#00E1FF"/>
+      </linearGradient>
+      <clipPath id="zclip">
+<path transform="translate(0.000000,1290.000000) scale(0.100000,-0.100000)" d="M195 12736 c-20 -14 -20 -34 -20 -930 0 -629 3 -918 11 -926 7 -7
+1740 -10 5780 -10 3344 0 5795 -4 5831 -9 46 -7 76 -19 120 -49 65 -44 130
+-130 144 -189 11 -49 11 -456 0 -505 -13 -55 -68 -134 -126 -178 -29 -22 -57
+-40 -63 -40 -6 0 -27 -13 -45 -30 -19 -16 -39 -30 -43 -30 -5 -1 -25 -14 -44
+-30 -19 -17 -39 -30 -45 -30 -5 0 -29 -15 -52 -33 -51 -39 -97 -71 -142 -100
+-19 -12 -51 -33 -71 -47 -20 -14 -52 -35 -71 -47 -19 -12 -47 -31 -64 -43 -16
+-12 -45 -31 -64 -43 -19 -12 -53 -34 -75 -50 -23 -15 -54 -35 -69 -45 -16 -9
+-45 -29 -64 -44 -20 -16 -39 -28 -43 -28 -4 0 -23 -12 -43 -27 -19 -16 -48
+-36 -64 -45 -15 -10 -47 -30 -69 -45 -23 -16 -61 -41 -84 -57 -24 -15 -53 -37
+-64 -47 -11 -11 -25 -19 -31 -19 -6 0 -26 -13 -45 -30 -19 -16 -39 -29 -44
+-30 -4 0 -22 -12 -40 -26 -17 -14 -65 -48 -106 -75 -85 -56 -98 -65 -193 -128
+-108 -72 -141 -94 -178 -118 -19 -12 -47 -31 -64 -43 -16 -12 -45 -31 -64 -43
+-19 -12 -53 -34 -75 -50 -23 -15 -54 -35 -70 -45 -16 -9 -40 -26 -55 -38 -14
+-12 -40 -28 -56 -37 -17 -8 -39 -24 -49 -36 -11 -12 -23 -21 -28 -21 -10 0
+-105 -61 -132 -86 -10 -9 -28 -22 -40 -28 -12 -6 -37 -23 -57 -38 -20 -16 -39
+-28 -44 -28 -4 0 -21 -12 -39 -26 -42 -35 -134 -94 -144 -94 -5 0 -17 -9 -28
+-21 -10 -12 -32 -28 -49 -36 -16 -9 -42 -25 -56 -37 -15 -12 -39 -29 -55 -38
+-16 -10 -47 -30 -70 -45 -22 -16 -56 -38 -75 -50 -19 -12 -47 -31 -64 -43 -16
+-12 -45 -31 -64 -43 -19 -12 -51 -33 -72 -47 -20 -14 -72 -48 -116 -77 -43
+-28 -92 -63 -109 -77 -18 -14 -34 -26 -38 -26 -3 0 -40 -24 -82 -52 -42 -29
+-84 -57 -93 -63 -9 -5 -32 -22 -52 -37 -20 -16 -40 -28 -46 -28 -5 0 -18 -8
+-29 -19 -11 -10 -40 -32 -64 -47 -23 -16 -59 -40 -80 -54 -20 -14 -52 -35 -71
+-47 -19 -12 -47 -31 -64 -43 -16 -12 -45 -31 -64 -43 -19 -12 -53 -34 -75 -50
+-23 -15 -54 -35 -69 -45 -16 -9 -45 -29 -64 -44 -20 -16 -39 -28 -43 -28 -4 0
+-23 -12 -43 -27 -19 -16 -48 -36 -64 -45 -15 -10 -46 -30 -69 -45 -22 -16 -56
+-38 -75 -50 -45 -29 -91 -61 -142 -100 -23 -18 -47 -33 -52 -33 -6 0 -26 -13
+-45 -30 -19 -16 -39 -29 -44 -30 -4 0 -22 -12 -40 -26 -17 -14 -66 -49 -109
+-77 -44 -29 -96 -63 -116 -77 -21 -14 -53 -35 -72 -47 -19 -12 -47 -31 -64
+-43 -16 -12 -45 -31 -64 -43 -19 -12 -51 -33 -71 -47 -20 -14 -52 -35 -71 -47
+-19 -12 -47 -31 -64 -43 -16 -12 -45 -31 -64 -43 -19 -12 -53 -34 -75 -50 -23
+-15 -54 -35 -70 -45 -16 -9 -44 -29 -61 -44 -18 -16 -35 -28 -39 -28 -6 0
+-127 -80 -136 -90 -9 -10 -130 -90 -136 -90 -3 0 -20 -12 -38 -26 -17 -14 -66
+-49 -109 -77 -44 -29 -96 -63 -116 -77 -21 -14 -53 -35 -72 -47 -19 -12 -47
+-31 -64 -43 -16 -12 -45 -31 -64 -43 -19 -12 -51 -33 -71 -47 -21 -14 -49 -33
+-64 -42 -14 -10 -38 -26 -52 -35 -41 -28 -95 -63 -181 -120 -43 -28 -92 -63
+-109 -77 -18 -14 -36 -26 -40 -26 -5 -1 -25 -14 -44 -30 -19 -17 -38 -30 -44
+-30 -5 0 -25 -12 -45 -27 -50 -39 -121 -86 -153 -102 -16 -8 -28 -18 -28 -22
+0 -5 -17 -18 -37 -29 -35 -19 -54 -32 -138 -90 -16 -12 -45 -31 -64 -43 -19
+-12 -51 -33 -71 -47 -20 -14 -52 -35 -71 -47 -19 -12 -47 -31 -64 -43 -84 -58
+-103 -71 -138 -90 -52 -29 -183 -162 -210 -214 -44 -86 -56 -112 -79 -186
+l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
+-58 26 -52 146 -175 216 -222 50 -33 136 -69 230 -96 43 -12 754 -14 4997 -12
+3471 2 4950 6 4958 14 7 7 10 287 10 905 0 492 0 902 0 911 0 10 -13 24 -30
+33 -26 13 -478 15 -4172 15 l-4143 0 -63 23 c-45 17 -79 39 -118 76 -30 29
+-61 66 -69 81 -34 65 -45 166 -45 398 0 367 23 422 229 555 19 12 51 33 71 47
+20 14 52 35 71 47 19 12 48 31 64 43 17 12 45 31 64 43 19 12 53 34 75 50 23
+15 54 35 69 45 16 9 45 29 64 45 20 15 39 27 43 27 4 0 23 12 43 28 19 15 48
+35 64 44 15 10 47 30 69 45 23 16 61 41 84 57 24 15 53 37 64 47 11 11 25 19
+31 19 6 0 26 13 45 30 19 16 39 29 44 30 4 0 22 12 40 26 17 14 66 49 109 77
+44 29 96 63 116 77 21 14 53 35 72 47 19 12 48 31 64 43 17 12 45 31 64 43 19
+12 51 33 71 47 20 14 52 35 71 47 19 12 48 31 64 43 17 12 45 31 64 43 19 12
+53 34 75 50 23 15 54 35 70 45 16 9 44 29 61 44 18 16 36 28 39 28 9 0 106 64
+130 86 10 9 28 22 40 28 12 6 37 23 57 39 20 15 39 27 44 27 4 0 21 12 39 26
+17 14 66 49 109 77 44 29 96 63 116 77 21 14 53 35 72 47 19 12 48 31 64 43
+17 12 45 31 64 43 19 12 51 33 71 47 21 14 49 33 64 43 14 9 38 25 52 35 34
+22 83 55 181 119 43 28 91 62 108 75 16 13 39 28 52 35 12 6 28 16 35 23 11 9
+77 53 127 85 9 6 32 22 52 38 20 15 40 27 46 27 5 0 18 8 29 19 11 10 40 32
+64 47 23 16 59 40 80 54 20 14 52 35 71 47 19 12 48 31 64 43 17 12 45 31 64
+43 19 12 51 33 71 47 20 14 52 35 71 47 19 12 48 31 64 43 17 12 45 31 64 43
+19 12 53 34 75 50 23 15 54 35 70 45 16 9 42 29 59 44 18 16 37 28 43 28 6 0
+27 12 47 28 89 67 125 92 133 92 6 0 25 13 44 30 19 16 39 29 44 30 4 0 22 12
+40 26 17 14 66 49 109 77 44 29 96 63 116 77 21 14 53 35 72 47 19 12 48 31
+64 43 17 12 45 31 64 43 19 12 51 33 71 47 21 14 49 33 64 43 14 9 38 25 52
+35 41 27 95 62 181 119 43 28 92 63 109 77 18 14 35 26 38 26 6 0 127 80 136
+90 9 10 130 90 136 90 3 0 20 12 38 26 17 14 66 49 109 77 44 29 96 63 116 77
+21 14 53 35 72 47 19 12 48 31 64 43 17 12 45 31 64 43 19 12 51 33 71 47 21
+14 50 34 66 44 16 11 40 26 53 35 35 24 90 60 178 118 43 28 92 63 109 77 18
+14 36 26 40 26 5 1 25 14 44 30 19 17 39 30 45 30 5 0 29 15 52 33 51 39 97
+71 142 100 19 12 53 34 75 50 23 15 54 35 69 45 16 9 45 29 64 45 20 15 39 27
+43 27 4 0 23 12 43 28 19 15 48 35 64 44 15 10 46 30 69 45 22 16 56 38 75 50
+19 12 48 31 64 43 17 12 45 31 64 43 19 12 51 33 71 47 21 14 57 38 81 54 24
+16 50 35 57 43 8 7 28 20 45 28 74 35 192 137 251 215 68 92 102 174 121 292
+16 99 16 207 6 1610 -6 826 -15 1530 -20 1563 -14 93 -89 238 -170 329 -72 80
+-224 167 -336 194 -65 15 -580 17 -6635 19 -5673 3 -6569 1 -6585 -11z"/>
+<rect x="-2000" y="15" width="2060" height="188"/></clipPath>
+    </defs>
+    <path id="snakePath" clip-path="url(#zclip)" d="M -1983 108 H 1297 V 350 L 440 929 V 1183 H 1394" fill="none" stroke="url(#zg)" stroke-width="400" stroke-linejoin="round"/>
+  </svg>
+</div>
     <div class="wrap">
-      <span class="eyebrow rise"><i></i>Estratégia · Customer Experience · Visibilidade em IA</span>
       <h1 class="rise d1">Reinventamos a experiência do <span class="grad-text">cliente</span>.</h1>
       <p class="lead rise d2">Somos uma consultora de estratégia e marketing digital orientada por dados. Ajudamos marcas a serem encontradas, compreendidas e escolhidas: no percurso de compra, nos canais digitais e, agora, dentro das respostas do ChatGPT, Gemini, Perplexity e Claude.</p>
       <div class="hero-ctas rise d3">
@@ -587,6 +673,22 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
   const on = () => nav.classList.toggle("scrolled", scrollY > 12);
   addEventListener("scroll", on, { passive: true }); on();
   document.getElementById("yr").textContent = new Date().getFullYear();
+  const layer = document.getElementById("zlayer"), path = document.getElementById("snakePath"), next = document.getElementById("servicos");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const L = path.getTotalLength();
+  path.style.strokeDasharray = L + " " + L;
+  let ticking = false;
+  const update = () => {
+    const end = next.getBoundingClientRect().top + scrollY;          // a secção seguinte ocupa o ecrã inteiro
+    const p = Math.min(1, Math.max(0, scrollY / end));
+    const e = p * p * (3 - 2 * p);                                    // suavizar início e fim
+    path.style.strokeDashoffset = String(-e * L);                     // a cauda recolhe ao longo do Z
+    if (!reduce) layer.style.transform = "translate3d(0," + (-scrollY * 0.35) + "px,0)";
+    layer.style.visibility = p >= 1 ? "hidden" : "visible";
+    ticking = false;
+  };
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener("resize", update); update();
 })();
 </script>
 </body>
