@@ -359,7 +359,7 @@ function openPanel(id) {
   const pk = PKEY[id[0]], panel = $("#panel");
   const src = (s) => /^[\w.-]+\.[a-z]{2,}(\/[^\s]*)?$/i.test(s) ? `<a href="https://${esc(s)}" target="_blank" rel="noopener">${esc(s)}</a>` : `<span>${esc(s)}</span>`;
   const isAdmin = S.me.role === "admin" && !S.preview;
-  panel.style.setProperty("--pc", `var(--${pk})`);
+  panel.style.setProperty("--pc", `var(--${pk})`); panel.style.setProperty("--pi", `var(--${pk}-ink)`);
   panel.innerHTML = `<div class="panel-head"><span class="id">${esc(id)}</span><h3 id="panel-title">${esc(c.label)}</h3><button class="x" aria-label="Fechar">✕</button></div>
     <div class="panel-body"><span class="spill s${c.score}"><i></i>${SCORE_NAMES[c.score]}</span>
       <div class="pb"><h4>Racional</h4><p>${esc(c.rationale)}</p></div>
