@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="pt">
 <head>
+<script>window.SCENES = !matchMedia('(prefers-reduced-motion: reduce)').matches;</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>UZER Consulting</title>
@@ -218,6 +219,41 @@ input,textarea,[contenteditable]{cursor:text}
 #metodo.inv .step p{color:#55555E}
 .cta::before{opacity:var(--cg,1)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<style>
+/* ---- teste: cenas fixas conduzidas pelo scroll ---- */
+html.scenes main,html.scenes footer{display:none}
+.stage{position:fixed;inset:0;overflow:hidden;z-index:2}
+.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:84px 0 32px;perspective:1400px}
+.scene>.wrap,.scene>section{width:100%}
+.scene .wrap{perspective:1400px}
+.scene .hero{min-height:0;padding-block:0;overflow:visible;width:100%;height:100%}
+.scene .sec{padding:0}
+.scene .sec-head{margin-bottom:0}
+.scene .wrap .wrap{padding-inline:0}
+.scene .foot{margin-top:28px}
+.scene .services{width:100%}
+.scene .photo{aspect-ratio:auto;height:min(70vh,640px)}
+.scene .team{align-items:center}
+.scene .quote{position:relative}
+/* Método: painel branco em ecrã inteiro que abre a partir de uma linha */
+.m-panel{position:absolute;inset:0;background:#F4F4F6;clip-path:inset(50% 0);visibility:hidden}
+.m-line{height:2px;margin-top:22px;border-radius:2px;background:rgba(10,10,13,.08);overflow:hidden}
+.m-line i{display:block;height:100%;background:linear-gradient(90deg,#3322FF,#1A8CFF,#00E1FF);transform-origin:left;transform:scaleX(var(--k,0))}
+/* Talk2me: indicador "a escrever" */
+.t-dots{position:absolute;left:22px;top:22px;display:flex;gap:5px;opacity:0;transition:opacity .2s}
+.t-dots i{width:6px;height:6px;border-radius:50%;background:var(--text-2);animation:tdot 1s infinite ease-in-out}
+.t-dots i:nth-child(2){animation-delay:.15s}.t-dots i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{translate:0 0;opacity:.35}30%{translate:0 -4px;opacity:1}}
+/* navegação entre cenas */
+.scene-dots{position:fixed;right:18px;top:50%;translate:0 -50%;z-index:60;display:flex;flex-direction:column;gap:9px}
+.scene-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .3s, scale .3s}
+.scene-dots i.on{background:linear-gradient(120deg,#3322FF,#1A8CFF,#00E1FF);scale:1.5}
+body.invert .scene-dots i{background:rgba(0,0,0,.2)}
+body.invert .scene .kicker{color:#6E6E78}
+.test-tag{position:fixed;left:16px;bottom:14px;z-index:60;font:500 11px/1 "Geist Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:#6E6E78}
+@media (max-width:760px){.scene{padding:76px 0 20px;align-items:flex-start;overflow:hidden}.scene .photo{height:42vh}.t-dots{left:18px;top:18px}}
 </style>
 </head>
 <body>
@@ -869,6 +905,7 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
   <div>© <span id="yr">2026</span> UZER Consulting</div>
 </div></footer>
 
+<script>window.SCENES = window.SCENES && ["#heroBg", "#bigz", ".hero h1", ".hero .lead", ".hero .hero-ctas", ".hero .hero-meta", "#servicos .sec-head h2", "#servicos .sec-head > p", "#air .air-mini", "#servicos .svc:not(.feature)", "#metodo .steps", "#metodo .sec-head h2", "#talk2me .t2m .quote", "#equipa .team .photo img", "#equipa .team > div:last-child .person", "#contacto .cta h2", "footer .foot", "#nav"].every(q => document.querySelector(q));</script>
 <script>
 (() => {
   const nav = document.getElementById("nav");
@@ -878,7 +915,7 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   // a entrada inicial usa animação em transform/opacity; depois de acabar, sai para o parallax mandar
   document.querySelectorAll(".rise").forEach(el => el.addEventListener("animationend", () => el.classList.remove("rise"), { once: true }));
-  if (reduce) return;
+  if (reduce || window.SCENES) return;
 
   const hero = document.querySelector(".hero"), heroBg = document.getElementById("heroBg"), bigz = document.getElementById("bigz");
   const heroLayers = [...hero.querySelectorAll("[data-hero]")].map(el => ({ el, k: +el.dataset.hero }));
@@ -934,7 +971,7 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
     const c = cfg.get(h) || blank(); c.words = [...h.querySelectorAll(".w")]; cfg.set(h, c);
   });
   const metodo = document.getElementById("metodo");
-  cfg.set(metodo, Object.assign(blank(), { inv: true }));                                                            // Método em negativo
+  if (metodo) cfg.set(metodo, Object.assign(blank(), { inv: true }));                                                            // Método em negativo
   const items = [...cfg].map(([el, c]) => Object.assign({ el, top: 0, h: 0 }, c));
   const metodoIt = items.find(it => it.inv);
   const clamp = v => Math.min(1, Math.max(0, v));
@@ -1046,6 +1083,317 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
     };
     setTimeout(drift, 150);
   }
+</script>
+
+<script>
+(() => {
+  if (!window.SCENES) return;
+  const $ = (q, el = document) => el.querySelector(q), $$ = (q, el = document) => [...el.querySelectorAll(q)];
+  const clamp = v => Math.min(1, Math.max(0, v));
+  const lin = t => t;
+  const outExpo = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));        // entradas: rápidas e a assentar
+  const outCubic = t => 1 - Math.pow(1 - t, 3);
+  const inCubic = t => t * t * t;                                      // saídas: começam devagar e aceleram
+  const inOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const seg = (r, a, b, f = outCubic) => f(clamp((r - a) / (b - a)));
+  document.documentElement.classList.add("scenes", "js-fx");
+
+  // ---------- palco e cenas (os elementos da página são movidos, nada é duplicado nem perdido)
+  const stage = document.createElement("div"); stage.className = "stage"; document.body.prepend(stage);
+  const panel = document.createElement("div"); panel.className = "m-panel"; stage.append(panel);
+  const makeScene = (nodes, id) => {
+    const sc = document.createElement("div"); sc.className = "scene"; sc.dataset.id = id;
+    const needsWrap = nodes.length > 1 || nodes.every(n => !n.classList.contains("wrap") && n.tagName !== "SECTION");
+    const box = needsWrap ? Object.assign(document.createElement("div"), { className: "wrap" }) : sc;
+    nodes.forEach(n => box.append(n)); if (needsWrap) sc.append(box);
+    stage.append(sc); return sc;
+  };
+
+  // ---------- utilitários
+  const typer = (el) => {                                              // máquina de escrever sem mexer no layout
+    if (!el) return () => {};
+    const text = el.textContent, typed = document.createElement("span"), ghost = document.createElement("span");
+    typed.className = "typed"; ghost.className = "ghost"; ghost.textContent = text;
+    el.textContent = ""; el.append(typed, ghost); el.classList.add("tw");
+    let last = -1;
+    return (k) => {
+      const n = Math.round(clamp(k) * text.length);
+      if (n !== last) { typed.textContent = text.slice(0, n); ghost.textContent = text.slice(n); last = n; }
+      el.classList.toggle("tw-done", n === 0 || n === text.length);
+    };
+  };
+  const lighter = (el, base = 0.14) => {                               // palavras que acendem
+    if (!el) return () => {};
+    const words = el.textContent.trim().split(/\s+/); el.textContent = "";
+    const spans = words.map((w, i) => { const sp = document.createElement("span"); sp.textContent = w; el.append(sp); if (i < words.length - 1) el.append(" "); return sp; });
+    return (k) => { const q = clamp(k) * (spans.length + 1); spans.forEach((sp, i) => { sp.style.opacity = (base + (1 - base) * clamp(q - i)).toFixed(3); }); };
+  };
+  const wipe = (el, k, dir = "right", round = 0) => {                  // máscara no sentido da leitura
+    if (!el) return;
+    if (k >= 1) { el.style.clipPath = ""; return; }
+    const v = ((1 - k) * 100).toFixed(2), rr = round ? ` round ${round}px` : "";
+    el.style.clipPath = dir === "right" ? `inset(0 ${v}% 0 0${rr})` : dir === "up" ? `inset(${v}% 0 0 0${rr})` : `inset(0 0 ${v}% 0${rr})`;
+  };
+  const set = (el, { x = 0, y = 0, s = 1, o = 1, rx = 0, blur = 0 } = {}) => {
+    if (!el) return;
+    const st = el.style;
+    st.translate = x || y ? `${x.toFixed(1)}px ${y.toFixed(1)}px` : "";
+    st.scale = s === 1 ? "" : s.toFixed(4);
+    st.opacity = o >= 1 ? "" : Math.max(0, o).toFixed(3);
+    st.rotate = rx ? `x ${rx.toFixed(2)}deg` : "";
+    st.filter = blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : "";
+  };
+  // saída comum: sobe e dissolve-se, em cascata de cima para baixo
+  const outK = (x, i, span = 0.5, step = 0.07) => seg(x, i * step, span + i * step, inCubic);
+
+  // ---------- 1. topo
+  const hero = $(".hero"), heroBg = $("#heroBg"), bigz = $("#bigz");
+  const bars = $$(".zx").map(el => ({ el, left: el.dataset.side === "L", at: +el.dataset.at }));
+  const heroText = [$(".hero h1"), $(".hero .lead"), $(".hero .hero-ctas"), $(".hero .hero-meta")];
+  const TOP = {
+    apply(r, x) {
+      // cada bloco sobe e desaparece contra uma linha invisível no seu próprio topo
+      heroText.forEach((el, i) => {
+        const k = outK(x, i, 0.45, 0.09), T = k * (el.offsetHeight + 10);
+        el.style.translate = T ? `0 ${(-T).toFixed(1)}px` : "";
+        el.style.clipPath = T ? `inset(${T.toFixed(1)}px 0 0 0)` : "";
+      });
+      // as barras do Z esticam e o Z recua em profundidade
+      const d = seg(x, 0, 0.75) * 1500;
+      bars.forEach(b => { b.el.setAttribute("width", d > 0.5 ? (d + 6).toFixed(1) : "0"); b.el.setAttribute("x", (b.left ? b.at - d : b.at).toFixed(1)); });
+      const zk = seg(x, 0.4, 1, inCubic);
+      bigz.style.setProperty("--zfade", (1 - zk).toFixed(3));
+      set(bigz, { s: 1 - zk * 0.28, blur: zk * 6 });
+      heroBg.style.opacity = (1 - seg(x, 0.2, 0.9)).toFixed(3);
+    },
+  };
+
+  // ---------- 2. O que fazemos
+  const sv = { head: $("#servicos .sec-head") };
+  sv.kick = $(".kicker", sv.head); sv.h2 = $("h2", sv.head); sv.p = $(":scope > p", sv.head);
+  const svType = typer(sv.kick), svLight = lighter(sv.h2);
+  const SERV = {
+    apply(r, x) {
+      svType(seg(r, 0, 0.3, lin));
+      const hin = seg(r, 0.05, 0.45, outExpo);
+      svLight(seg(r, 0.15, 0.75, lin));
+      wipe(sv.p, seg(r, 0.45, 0.92, inOut));
+      set(sv.kick, { y: -outK(x, 0) * 70, o: 1 - outK(x, 0) });
+      set(sv.h2, { y: (1 - hin) * 28 - outK(x, 1) * 70, o: hin * (1 - outK(x, 1)) });
+      set(sv.p, { y: -outK(x, 2) * 70, o: 1 - outK(x, 2) });
+    },
+  };
+
+  // ---------- 3. AIR
+  const air = $("#air"), airL = $(":scope > div:first-child", air);
+  const airA = { num: $(".num", airL), h3: $("h3", airL), p: $(":scope > p", airL), chips: $$("li", airL), btn: $(".btn", airL),
+    pills: $$(".pill", air), formula: $(".formula", air), legend: $(".legend", air) };
+  const airNum = typer(airA.num), airFormula = typer(airA.formula);
+  airA.rows = airA.pills.map(pl => $$(".row", pl).map(row => ({ row, dot: $("i", row) })));
+  const AIR = {
+    apply(r, x) {
+      // o cartão levanta-se da mesa
+      const c = seg(r, 0, 0.35, outExpo), X = seg(x, 0, 0.8, inCubic);
+      set(air, { y: (1 - c) * 90 - X * 80, rx: (1 - c) * 14, o: Math.min(1, c * 1.4) * (1 - X), s: 1 - X * 0.03, blur: X * 4 });
+      // coluna do texto: número, título, texto no sentido da leitura, etiquetas, botão
+      airNum(seg(r, 0.16, 0.26, lin));
+      const h = seg(r, 0.2, 0.45, outExpo); set(airA.h3, { y: (1 - h) * 16, o: h });
+      wipe(airA.p, seg(r, 0.3, 0.62, inOut));
+      airA.chips.forEach((li, i) => { const k = seg(r, 0.5 + i * 0.05, 0.64 + i * 0.05, outExpo); set(li, { s: 0.85 + 0.15 * k, o: k }); });
+      const b = seg(r, 0.7, 0.86, outExpo); set(airA.btn, { y: (1 - b) * 10, o: b });
+      // pilares: chegam em sequência, o fio néon desenha-se e as linhas acendem uma a uma (a auditoria a correr)
+      airA.pills.forEach((pl, i) => {
+        const k = seg(r, 0.3 + i * 0.08, 0.55 + i * 0.08, outExpo);
+        set(pl, { y: (1 - k) * 34, o: k });
+        pl.style.setProperty("--l", seg(r, 0.42 + i * 0.08, 0.66 + i * 0.08, inOut).toFixed(3));
+        airA.rows[i].forEach(({ row, dot }, j) => {
+          const a = 0.55 + i * 0.06 + j * 0.04, kr = seg(r, a, a + 0.08, outExpo);
+          set(row, { x: (1 - kr) * -10, o: kr });
+          if (dot) dot.classList.toggle("on", r > a + 0.07);
+        });
+      });
+      airFormula(seg(r, 0.72, 0.9, lin));
+      set(airA.legend, { o: seg(r, 0.88, 0.98) });
+    },
+  };
+
+  // ---------- 4. serviços (grelha): revelados em máscara, por ordem de leitura
+  const cards = $$("#servicos .svc:not(.feature)");
+  const grid = Object.assign(document.createElement("div"), { className: "services" }); cards.forEach(c => grid.append(c));
+  const cardA = cards.map(cd => ({ cd, h3: $("h3", cd), p: $("p", cd), chips: $$("li", cd), num: typer($(".num", cd)) }));
+  const GRID = {
+    apply(r, x) {
+      cardA.forEach(({ cd, h3, p, chips, num }, i) => {
+        const a = i * 0.12, k = seg(r, a, a + 0.38, inOut), X = outK(x, i, 0.55, 0.08);
+        wipe(cd, k, "right", 20);
+        set(cd, { x: (1 - seg(r, a, a + 0.38, outExpo)) * -30, y: -X * 80, o: (k > 0 ? 1 : 0) * (1 - X) });
+        num(seg(r, a + 0.1, a + 0.2, lin));
+        const t = seg(r, a + 0.12, a + 0.4, outExpo); set(h3, { y: (1 - t) * 12, o: t });
+        set(p, { o: seg(r, a + 0.2, a + 0.45) });
+        chips.forEach((li, j) => { const kk = seg(r, a + 0.3 + j * 0.03, a + 0.42 + j * 0.03, outExpo); set(li, { s: 0.85 + 0.15 * kk, o: kk }); });
+      });
+    },
+  };
+
+  // ---------- 5. Método: faixa branca abre do centro; passos da esquerda para a direita com linha de progresso
+  const metodo = $("#metodo"), mHead = $(".sec-head", metodo), nav = $("#nav");
+  const mA = { kick: $(".kicker", mHead), h2: $("h2", mHead), p: $(":scope > p", mHead), steps: $$(".step", metodo) };
+  const mLine = document.createElement("div"); mLine.className = "m-line"; mLine.innerHTML = "<i></i>"; $(".steps", metodo).after(mLine);
+  const mType = typer(mA.kick), mLight = lighter(mA.h2), mNums = mA.steps.map(st => typer($(".n", st)));
+  const METODO = {
+    off() { panel.style.visibility = "hidden"; document.body.classList.remove("invert"); metodo.classList.remove("inv"); nav.classList.remove("solid"); },
+    apply(r, x) {
+      const open = seg(r, 0, 0.3, outExpo) * (1 - seg(x, 0.35, 0.9, inOut));
+      panel.style.visibility = open > 0.001 ? "visible" : "hidden";
+      panel.style.clipPath = `inset(${((1 - open) * 50).toFixed(2)}% 0)`;
+      const inv = open > 0.5; document.body.classList.toggle("invert", inv); metodo.classList.toggle("inv", inv);
+      nav.classList.toggle("solid", open > 0.01);                  // barra preta sólida sobre o branco
+      const X = i => outK(x, i, 0.3, 0.04);                           // o conteúdo sai antes de o painel fechar
+      mType(seg(r, 0.25, 0.42, lin)); set(mA.kick, { y: -X(0) * 50, o: 1 - X(0) });
+      const h = seg(r, 0.28, 0.55, outExpo); mLight(seg(r, 0.32, 0.7, lin));
+      set(mA.h2, { y: (1 - h) * 24 - X(1) * 50, o: h * (1 - X(1)) });
+      wipe(mA.p, seg(r, 0.45, 0.72, inOut)); set(mA.p, { y: -X(2) * 50, o: 1 - X(2) });
+      mA.steps.forEach((st, i) => {
+        const a = 0.55 + i * 0.08, k = seg(r, a, a + 0.17, outExpo);
+        set(st, { y: (1 - k) * 26 - X(3 + i) * 50, o: k * (1 - X(3 + i)) });
+        mNums[i](seg(r, a, a + 0.07, lin));
+      });
+      mLine.style.setProperty("--k", (seg(r, 0.55, 0.95, inOut) * (1 - X(7))).toFixed(3));
+    },
+  };
+
+  // ---------- 6. Talk2me: as citações chegam como mensagens (a escrever…, texto, fonte)
+  const t2m = $("#talk2me .t2m"), tLeft = $(":scope > div:first-child", t2m);
+  const tA = { kick: $(".kicker", tLeft), h2: $("h2", tLeft), p: $("p", tLeft), quotes: $$(".quote", t2m) };
+  const tType = typer(tA.kick), tLight = lighter(tA.h2);
+  const tQ = tA.quotes.map(q => {
+    const dots = document.createElement("span"); dots.className = "t-dots"; dots.innerHTML = "<i></i><i></i><i></i>"; q.prepend(dots);
+    return { q, dots, type: typer($("p", q)), cite: $("cite", q) };
+  });
+  const TALK = {
+    apply(r, x) {
+      tType(seg(r, 0, 0.18, lin)); tLight(seg(r, 0.05, 0.4, lin));
+      const h = seg(r, 0.02, 0.3, outExpo);
+      set(tA.h2, { y: (1 - h) * 24 - outK(x, 1) * 70, o: h * (1 - outK(x, 1)) });
+      set(tA.kick, { y: -outK(x, 0) * 70, o: 1 - outK(x, 0) });
+      wipe(tA.p, seg(r, 0.18, 0.42, inOut)); set(tA.p, { y: -outK(x, 2) * 70, o: 1 - outK(x, 2) });
+      tQ.forEach(({ q, dots, type, cite }, i) => {
+        const a = 0.32 + i * 0.2, arrive = seg(r, a, a + 0.08, outExpo), X = outK(x, 3 + i, 0.5, 0.07);
+        set(q, { x: (1 - arrive) * 48, y: -X * 90, o: arrive * (1 - X) });
+        dots.style.opacity = r > a + 0.02 && r < a + 0.09 ? "1" : "0";
+        type(seg(r, a + 0.08, a + 0.17, lin));
+        set(cite, { o: seg(r, a + 0.16, a + 0.2) });
+      });
+    },
+  };
+
+  // ---------- 7. Equipa: a fotografia revela-se de baixo para cima e assenta; nomes em faixa, cargo escrito
+  const team = $("#equipa .team"), photo = $(".photo", team), img = $("img", photo), eText = $(":scope > div:last-child", team);
+  const eA = { kick: $(".kicker", eText), h2: $("h2", eText), p: $(":scope > p", eText), people: $$(".person", eText) };
+  const eType = typer(eA.kick), eLight = lighter(eA.h2), eRoles = eA.people.map(pr => typer($("span", pr)));
+  const EQUIPA = {
+    apply(r, x) {
+      const k = seg(r, 0, 0.42, inOut), xk = seg(x, 0, 0.7, inCubic);
+      if (xk > 0) photo.style.clipPath = `inset(0 0 ${(xk * 100).toFixed(2)}% 0 round 20px)`; else wipe(photo, k, "up", 20);
+      set(photo, { y: -xk * 40 });
+      img.style.scale = (1.18 - 0.18 * seg(r, 0, 0.7) + xk * 0.06).toFixed(4);
+      eType(seg(r, 0.2, 0.34, lin)); eLight(seg(r, 0.26, 0.6, lin));
+      const h = seg(r, 0.22, 0.5, outExpo);
+      set(eA.kick, { y: -outK(x, 0) * 60, o: 1 - outK(x, 0) });
+      set(eA.h2, { y: (1 - h) * 24 - outK(x, 1) * 60, o: h * (1 - outK(x, 1)) });
+      wipe(eA.p, seg(r, 0.38, 0.62, inOut)); set(eA.p, { y: -outK(x, 2) * 60, o: 1 - outK(x, 2) });
+      eA.people.forEach((pr, i) => {
+        const a = 0.52 + i * 0.1, kk = seg(r, a, a + 0.16, inOut), X = outK(x, 3 + i);
+        wipe(pr, kk, "right", 14);
+        set(pr, { y: -X * 60, o: (kk > 0 ? 1 : 0) * (1 - X) });
+        eRoles[i](seg(r, a + 0.1, a + 0.2, lin));
+      });
+    },
+  };
+
+  // ---------- 8. Contacto: a caixa abre a partir de uma linha e o texto constrói-se
+  const cta = $("#contacto .cta"), foot = $("footer .foot");
+  const cA = { kick: $(".kicker", cta), h2: $("h2", cta), p: $("p", cta), btns: $$(".btn", cta) };
+  const cType = typer(cA.kick), cLight = lighter(cA.h2, 0.12);
+  const CONTACTO = {
+    apply(r) {
+      const open = seg(r, 0, 0.3, outExpo);
+      cta.style.clipPath = open < 1 ? `inset(${((1 - open) * 50).toFixed(2)}% 0 ${((1 - open) * 50).toFixed(2)}% 0 round 28px)` : "";
+      cta.style.opacity = open > 0 ? "" : "0";
+      cType(seg(r, 0.24, 0.42, lin));
+      cLight(seg(r, 0.34, 0.68, lin));
+      const pp = seg(r, 0.6, 0.78, outExpo); set(cA.p, { y: (1 - pp) * 14, o: pp });
+      cA.btns.forEach((b, i) => { const k = seg(r, 0.72 + i * 0.07, 0.86 + i * 0.07, outExpo); set(b, { y: (1 - k) * 18, o: k }); });
+      const g = seg(r, 0.84, 1); cta.style.setProperty("--cg", g.toFixed(3));
+      if (foot) foot.style.opacity = g.toFixed(3);
+    },
+  };
+
+  // ---------- linha do tempo (em ecrãs de scroll): entrada/construção, pausa, saída; a seguinte entra durante a saída
+  const DEF = [
+    { id: "top", nodes: [hero], fx: TOP, len: 0, hold: 0.12, out: 0.9, hand: 0.75 },
+    { id: "servicos", nodes: [sv.head], fx: SERV, len: 0.65, hold: 0.35, out: 0.5, hand: 0.6 },
+    { id: "air", nodes: [air], fx: AIR, len: 1.0, hold: 0.35, out: 0.55, hand: 0.6 },
+    { id: "servicos2", nodes: [grid], fx: GRID, len: 0.8, hold: 0.35, out: 0.55, hand: 0.6 },
+    { id: "metodo", nodes: [metodo], fx: METODO, len: 1.0, hold: 0.35, out: 0.8, hand: 0.92 },
+    { id: "talk2me", nodes: [t2m], fx: TALK, len: 1.1, hold: 0.35, out: 0.55, hand: 0.6 },
+    { id: "equipa", nodes: [team], fx: EQUIPA, len: 0.9, hold: 0.35, out: 0.6, hand: 0.6 },
+    { id: "contacto", nodes: [cta, foot], fx: CONTACTO, len: 0.9, hold: 0.5, out: 0, hand: 0 },
+  ];
+  const scenes = DEF.map(d => Object.assign({ node: makeScene(d.nodes.filter(Boolean), d.id) }, d));
+
+  const measure = () => {
+    const vh = innerHeight;
+    let t = 0;
+    scenes.forEach((sc, i) => {
+      sc.box = sc.node.firstElementChild; sc.box.style.translate = ""; sc.node.style.alignItems = "";
+      const cs = getComputedStyle(sc.node), avail = vh - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      sc.over = Math.max(0, sc.box.scrollHeight - avail);
+      if (sc.over) sc.node.style.alignItems = "flex-start";
+      sc.t0 = i === 0 ? 0 : t; sc.tIn = sc.t0 + sc.len * vh; sc.tOut = sc.tIn + sc.hold * vh + sc.over; sc.t1 = sc.tOut + sc.out * vh;
+      t = sc.tOut + sc.out * vh * sc.hand;
+    });
+    document.body.style.height = (scenes[scenes.length - 1].tOut + vh) + "px";
+    frame();
+  };
+
+  const dots = document.createElement("div"); dots.className = "scene-dots"; dots.innerHTML = scenes.map(() => "<i></i>").join(""); document.body.append(dots);
+
+  const frame = () => {
+    const y = scrollY, vh = innerHeight;
+    let cur = 0;
+    scenes.forEach((sc, i) => {
+      const last = i === scenes.length - 1, on = y >= sc.t0 - 2 && (last || y <= sc.t1 + 2);
+      if (y >= sc.t0) cur = i;
+      sc.node.style.visibility = on ? "visible" : "hidden";
+      if (!on) { if (sc.wasOn) sc.fx.off?.(); sc.wasOn = false; return; }
+      sc.wasOn = true;
+      const r = sc.len ? clamp((y - sc.t0) / (sc.len * vh)) : 1;
+      const x = last ? 0 : clamp((y - sc.tOut) / (sc.out * vh));
+      if (sc.over) {                                                   // cena mais alta do que o ecrã: sobe enquanto se constrói e na pausa
+        const a = sc.t0 + sc.len * vh * 0.4;
+        sc.box.style.translate = `0 ${(-sc.over * clamp((y - a) / (sc.tOut - a))).toFixed(1)}px`;
+      }
+      sc.fx.apply(r, x);
+    });
+    [...dots.children].forEach((d, k) => d.classList.toggle("on", k === cur));
+    ticking = false;
+  };
+  let ticking = false;
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("resize", measure);
+
+  // menu: saltar para a cena já construída
+  const map = { "#top": "top", "#servicos": "servicos", "#air": "air", "#metodo": "metodo", "#talk2me": "talk2me", "#equipa": "equipa", "#contacto": "contacto" };
+  $$('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
+    const sc = scenes.find(s => s.id === map[a.getAttribute("href")]); if (!sc) return;
+    e.preventDefault(); scrollTo({ top: Math.max(0, sc.tIn), behavior: "smooth" });
+  }));
+  if (document.fonts) document.fonts.ready.then(measure);
+  measure();
+  const goHash = () => { const sc = scenes.find(s => s.id === map[location.hash]); if (sc) scrollTo({ top: Math.max(0, sc.tIn), behavior: "instant" }); };
+  if (location.hash) setTimeout(goHash, 0);
+})();
 </script>
 </body>
 </html>
