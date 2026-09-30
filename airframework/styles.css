@@ -1,4 +1,4 @@
-/* AIR Framework — app
+/* AIR Framework, app
    Layout: fundo preto contínuo; barra de topo em vidro fosco com logo branco + tabs;
    o framework vive em cartões brancos (mesma ordem/posições do deck: camada IA → 3 pilares → legenda → medição);
    admin = barra lateral de pastas à esquerda + área de conteúdo. */
@@ -97,7 +97,6 @@ a{color:inherit}
 .leaf[aria-current="true"]{background:#fff;color:#0A0A0D}
 .leaf[aria-current="true"] .ico{color:#0A0A0D}
 .leaf[aria-current="true"] .meta{color:#55555F}
-.leaf .dotv{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
 .main{min-width:0;padding:28px 28px 60px}
 @media (max-width:640px){.main{padding:20px 16px 48px}}
 .client-main{max-width:1320px;margin:0 auto;padding:28px 20px 60px}
@@ -262,3 +261,63 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
 .preview-banner .btn{border-radius:999px}
 a.logo{transition:opacity .15s}
 a.logo:hover{opacity:.8}
+
+/* ---------------- admin: edição dos textos da auditoria ---------------- */
+.edit-banner{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:11px 16px;border-radius:12px;font-size:13px;border:1px solid transparent}
+.edit-banner span{color:var(--text-2)}
+.ed{gap:14px}
+.ed-f{display:flex;flex-direction:column;gap:6px}
+.ed-f>span{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--card-sub);font-weight:600}
+.ed-f em{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500}
+.ed-in{font:inherit;font-size:13.5px;line-height:1.5;color:var(--card-ink);background:#FAFAFB;border:1px solid var(--card-hair);border-radius:10px;padding:9px 12px;width:100%;resize:vertical;outline:none}
+.ed-in:focus{border-color:var(--t2);box-shadow:0 0 0 3px rgba(26,140,255,.18)}
+.ed-srcs{display:flex;flex-direction:column;gap:6px}
+.ed-src{display:flex;gap:6px}
+.ed-rm{flex:0 0 38px;border:1px solid var(--card-hair);background:#fff;border-radius:10px;cursor:pointer;color:var(--card-sub)}
+.ed-rm:hover{color:#0E0E12;border-color:#0E0E12}
+.ed-add{align-self:flex-start;border:1px dashed #C9C9D2;background:transparent;border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--card-ink)}
+.ed-add:hover{border-color:#0E0E12}
+.ed-acts{display:flex;gap:8px;justify-content:flex-end;align-items:center;position:sticky;bottom:-18px;background:#fff;padding:12px 0 2px;border-top:1px solid var(--card-hair);margin-top:2px}
+.ed-acts .btn{background:#fff;color:#0E0E12;border-color:var(--card-hair)}
+.ed-acts .btn:hover{border-color:#0E0E12}
+.ed-acts .ed-save{background:#0A0A0D;color:#fff;border-color:#0A0A0D}
+.ed-acts .ed-save:hover{background:#26262E}
+.ed-err{margin-right:auto;color:#BE123C;font-size:12.5px}
+.sum-card textarea.ed-in{min-height:128px;font-size:14.5px}
+.ed-f.dark{margin:-6px 0 18px;max-width:720px}
+.ed-f.dark>span{color:var(--text-3)}
+.ed-in.dark{background:var(--panel);color:var(--text);border-color:var(--hair-2)}
+.ed-bar{position:sticky;bottom:16px;display:flex;justify-content:flex-end;margin-top:16px}
+.ed-bar .btn{box-shadow:0 12px 30px -10px rgba(0,0,0,.9)}
+
+/* ---------------- sem contornos: contentores e pílulas só com sombras subtis ---------------- */
+:root{
+  --sh-d:0 1px 2px rgba(0,0,0,.55), 0 10px 28px -14px rgba(0,0,0,.95);            /* sobre fundo escuro */
+  --sh-l:0 1px 2px rgba(14,14,18,.07), 0 6px 16px -10px rgba(14,14,18,.22);       /* sobre cartões brancos */
+}
+.login form,.input,.btn,.tabs,.score-pill,.select,.empty,.tbl-wrap,.tag,.box,.toast,.dialog,
+.topbar .btn.ghost,.preview-banner .btn,.chip,.srcs a,.srcs span,.panel-foot a,
+.ed-in,.ed-rm,.ed-add,.ed-acts .btn,.edit-banner{border:none!important}
+.login form,.tbl-wrap,.box,.dialog,.toast,.empty{box-shadow:var(--sh-d)}
+.input,.select,.score-pill,.tabs,.tag{background-color:var(--panel);box-shadow:var(--sh-d)}
+.btn{box-shadow:var(--sh-d)}
+.btn.ghost,.topbar .btn.ghost{background:var(--panel-2)}
+.btn.primary{box-shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 24px -12px rgba(255,255,255,.25)}
+.btn.danger{background:rgba(225,29,72,.12)}
+.input:focus{box-shadow:0 0 0 3px rgba(26,140,255,.35)}
+.tag.admin{background:rgba(26,140,255,.18);color:#fff}
+.preview-banner .btn{background:rgba(255,255,255,.12)}
+.topbar{border-bottom:none!important;box-shadow:0 10px 30px -18px rgba(0,0,0,1)}
+.sidebar{border-right:none!important;border-bottom:none!important;box-shadow:10px 0 30px -22px rgba(0,0,0,1)}
+.chip,.srcs a,.srcs span,.panel-foot a{background:#F3F3F6;box-shadow:var(--sh-l)}
+.chip:hover,.srcs a:hover,.panel-foot a:hover{background:#E9E9EE;color:#0E0E12}
+.ed-in{background:#F3F3F6;box-shadow:inset 0 1px 2px rgba(14,14,18,.06)}
+.ed-in:focus{box-shadow:0 0 0 3px rgba(26,140,255,.25)}
+.ed-rm,.ed-add,.ed-acts .btn{background:#F3F3F6;box-shadow:var(--sh-l)}
+.ed-rm:hover,.ed-add:hover,.ed-acts .btn:hover{background:#E9E9EE}
+.ed-acts .ed-save{background:#0A0A0D;color:#fff}
+.ed-acts .ed-save:hover{background:#26262E}
+.ed-in.dark{background:var(--panel);color:var(--text);box-shadow:var(--sh-d)}
+.edit-banner{background:var(--panel);box-shadow:var(--sh-d)}
+.edit-banner b{background:linear-gradient(120deg,var(--t1),var(--t2),var(--t3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn.on{background:#fff;color:#0A0A0D}

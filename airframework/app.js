@@ -225,7 +225,7 @@ function sidebarHTML() {
         <button data-cid="${esc(c.id)}" aria-expanded="${S.open.has(c.id)}">${CHEV}${FOLDER}<span>${esc(c.name)}</span><span class="cnt">${list.length}</span></button>
         <div class="kids">${list.length ? list.map((a) => `
           <button class="leaf" data-aid="${esc(a.id)}" aria-current="${S.view === "audit" && a.id === S.auditId}">
-            <i class="dotv"></i>${fmtDate(a.audit_date)} · ${esc(a.framework)}<span class="meta">${fmt(a.score_total)}</span></button>`).join("")
+            ${fmtDate(a.audit_date)} · ${esc(a.framework)}<span class="meta">${fmt(a.score_total)}</span></button>`).join("")
           : `<span class="leaf" style="cursor:default">Sem auditorias</span>`}</div>
       </div>`; }).join("")}
     </div></div>
