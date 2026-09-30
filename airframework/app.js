@@ -25,15 +25,15 @@ const V_OWN_EXT = { t: "CANAIS COM LEITURA DIRETA POR IA", q: "(que canais públ
   { t: "Canais próprios (ativáveis pela marca)", ids: ["V1", "V2", "V3"] },
   { t: "Canais externos (ativáveis pela marca)", ids: ["V4", "V5", "V6", "V7", "V8"] }] };
 const STRUCT = {
-  V8: { title: "AIR - AI Readiness Score", credit: "Modelo proprietário UZER CONSULTING · V8 · critérios V1–V10 · L1–L10 · C1–C10 alinhados com a Grelha de Pontuação AIX Score",
+  V8: { title: "AIR · AI Readiness Score", credit: "Modelo proprietário UZER CONSULTING · V8 · critérios V1 a V10 · L1 a L10 · C1 a C10 alinhados com a Grelha de Pontuação AIX Score",
     V: { kicker: "O que permite à IA encontrar a marca", secs: [V_OWN_EXT,
       { t: "CANAIS PAGOS COM IMPACTO INDIRETO", q: "(que canais amplificam procura, tráfego e sinais de interesse pela marca?)", subs: [{ t: "", ids: ["V9", "V10"] }] }] }, ...COMMON_LC },
-  V10: { title: "AIR - AI Readiness Score · V10", credit: "Modelo proprietário UZER CONSULTING · critérios V1–V10 · L1–L10 · C1–C10 · AIR Framework V10 (set 2026), consolida a V8 (jul 2026) e a revisão V9 (ago 2026)",
+  V10: { title: "AIR · AI Readiness Score · V10", credit: "Modelo proprietário UZER CONSULTING · critérios V1 a V10 · L1 a L10 · C1 a C10 · AIR Framework V10 (set 2026), consolida a V8 (jul 2026) e a revisão V9 (ago 2026)",
     V: { kicker: "O que permite à IA encontrar a marca", secs: [V_OWN_EXT,
       { t: "ÍNDICES DOS ASSISTENTES E CANAIS PAGOS", q: "(onde a IA pesquisa de facto; e o que amplifica os sinais de marca)", subs: [{ t: "", ids: ["V9", "V10"] }] }] }, ...COMMON_LC },
 };
 const structFor = (fw) => STRUCT[fw] || STRUCT.V10;
-const REGRA = "Regra de leitura: Visibilidade mede existência/acessibilidade do ativo; Credibilidade mede independência e força da validação externa. Cada dimensão = 10 critérios × 0–2 pts.";
+const REGRA = "Regra de leitura: Visibilidade mede existência/acessibilidade do ativo; Credibilidade mede independência e força da validação externa. Cada dimensão = 10 critérios × 0 a 2 pts.";
 
 /* ---------------------------------------------------------------- backend: Supabase (produção) ou demo local */
 function supabaseBackend() {
@@ -281,7 +281,7 @@ function wireUsers() {
   const role = $("#nu-role"), cl = $("#nu-client"); role.addEventListener("change", () => { cl.disabled = role.value === "admin"; });
   $("#new-user").addEventListener("submit", async (e) => {
     e.preventDefault(); const err = $("#nu-err"); err.textContent = "";
-    if (!e.target.checkValidity()) { err.textContent = "Username (2–40: letras, números, . _ -) e password com 6+ caracteres."; return; }
+    if (!e.target.checkValidity()) { err.textContent = "Username com 2 a 40 caracteres (letras, números, ponto, traço baixo ou hífen) e password com 6 ou mais caracteres."; return; }
     try { await api.createUser($("#nu-name").value.trim().toLowerCase(), $("#nu-pass").value, role.value, cl.value); toast("Login criado"); await refreshUsers(); }
     catch (er) { err.textContent = /duplicate|unique/i.test(er.message) ? "Esse username já existe." : er.message; }
   });
@@ -309,7 +309,7 @@ function frameworkView(a, scored) {
   const st = structFor(a.framework), byId = Object.fromEntries(a.criteria.map((c) => [c.id, c])), cn = clientOf(a.client_id)?.name || "";
   const P = a.pillars, v = 35 * P.V / 20, l = 30 * P.L / 20, cc = 35 * P.C / 20;
   const formula = scored ? `AIR ${esc(cn)} = 35 × (${P.V}/20) + 30 × (${P.L}/20) + 35 × (${P.C}/20) = ${fmt(v).replace(",0", "")} + ${fmt(l).replace(",0", "")} + ${fmt(cc).replace(",0", "")} → ${fmt(a.score_total)} / 100`
-    : `AIR Score (ponderação-base v1) = 35 × (V/20) + 30 × (L/20) + 35 × (C/20) → 0–100`;
+    : `AIR Score (ponderação-base v1) = 35 × (V/20) + 30 × (L/20) + 35 × (C/20) → de 0 a 100`;
   const pillar = (k) => { const pk = PKEY[k]; return `<section class="pillar ${pk}">
       <div class="kicker">${esc(st[k].kicker)}</div>
       <h3>${PNAME[k]}${scored ? `<span class="pscore">${P[k]}/20</span>` : ""}</h3>
@@ -317,7 +317,7 @@ function frameworkView(a, scored) {
         ${s.subs.map((sub) => `${sub.t ? `<div class="sub-t">${esc(sub.t)}</div>` : ""}${sub.ids.map((id) => byId[id] ? critRow(byId[id], scored, scored || editing()) : "").join("")}`).join("")}`).join("")}
     </section>`; };
   return `<div class="fw">
-    <div class="fw-head"><div><h2>${esc(scored ? "AIR - AI Readiness Score" : st.title)}</h2>
+    <div class="fw-head"><div><h2>${esc(scored ? "AIR · AI Readiness Score" : st.title)}</h2>
       <div class="sub">Como preparar uma marca para ser incluída nas respostas finais da IA</div>
       ${scored ? `<div class="meta">${esc(a.title || `Diagnóstico: ${cn} · ${fmtDate(a.audit_date)}`)}</div>` : ""}</div></div>
     ${editing() ? "" : scored ? `<p class="hint"><b>Clique em qualquer critério</b> para ver a evidência: racional, fontes consultadas e citações exatas.</p>` : ""}

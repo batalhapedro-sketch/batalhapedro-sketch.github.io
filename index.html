@@ -39,6 +39,13 @@ a{color:inherit;text-decoration:none}
 @media (max-width:600px){.wrap{padding-inline:16px}}
 .logo{display:block;color:#fff}.logo svg{display:block;height:100%;width:auto}
 .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-text.cloud{background-image:
+    radial-gradient(38% 58% at 22% 38%,rgba(0,225,255,.95),transparent 72%),
+    radial-gradient(46% 70% at 74% 62%,rgba(51,34,255,.95),transparent 72%),
+    radial-gradient(34% 52% at 52% 18%,rgba(26,140,255,.9),transparent 70%),
+    linear-gradient(120deg,var(--g2),var(--g3) 55%,var(--g4));
+  background-size:230% 230%,240% 240%,260% 260%,100% 100%;background-position:30% 40%,70% 60%,50% 30%,0 0;
+  transition:background-position 7.5s cubic-bezier(.45,.05,.55,.95)}
 
 /* nav */
 .nav{position:fixed;top:0;left:0;right:0;z-index:50;padding-top:env(safe-area-inset-top,0px);transition:background .25s,box-shadow .25s}
@@ -178,6 +185,10 @@ footer{padding-block:48px 56px;color:var(--text-3);font-size:13px}
 .rise{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
 .rise.d1{animation-delay:.08s}.rise.d2{animation-delay:.16s}.rise.d3{animation-delay:.24s}.rise.d4{animation-delay:.32s}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* cursor: seta branca de cantos arredondados, na direção normal e um pouco maior; um pouco maior ainda sobre links e botões */
+html{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5.00 3.00 L5.00 22.00 L10.00 17.50 L13.50 25.00 L17.00 23.40 L13.60 16.00 L20.00 15.60 Z' fill='%23FFFFFF' stroke='%230A0A0D' stroke-width='1.50' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 5 3, auto}
+a,button,[role=button],label,summary,.btn{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cpath d='M5.60 3.36 L5.60 24.64 L11.20 19.60 L15.12 28.00 L19.04 26.21 L15.23 17.92 L22.40 17.47 Z' fill='%23FFFFFF' stroke='%230A0A0D' stroke-width='1.68' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 6 3, pointer}
+input,textarea,[contenteditable]{cursor:text}
 /* parallax: o JS só mexe em translate/scale/opacity (propriedades independentes de transform) */
 .divider{transform-origin:50% 50%}
 
@@ -427,7 +438,7 @@ l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
       </svg>
     </div>
     <div class="wrap">
-      <h1 class="rise d1" data-hero="0.30">Reinventamos a experiência do <span class="grad-text">cliente</span>.</h1>
+      <h1 class="rise d1" data-hero="0.30">Reinventamos a experiência do <span class="grad-text cloud">cliente</span>.</h1>
       <p class="lead rise d2" data-hero="0.22">Somos uma consultora de estratégia e marketing digital orientada por dados. Ajudamos marcas a serem encontradas, compreendidas e escolhidas: no percurso de compra, nos canais digitais e, agora, dentro das respostas do ChatGPT, Gemini, Perplexity e Claude.</p>
       <div class="hero-ctas rise d3" data-hero="0.15">
         <a class="btn btn-white" href="#servicos">O que fazemos</a>
@@ -475,7 +486,7 @@ l-23 -75 -3 -1600 -2 -1600 30 -120 c18 -66 37 -127 45 -135 7 -8 22 -35 34
               <div class="row"><b>C7</b><span>Comunidades e fóruns</span><i class="r"></i></div>
               <div class="row"><b>C9</b><span>Gestão de avaliações</span><i class="g"></i></div></div>
           </div>
-          <div class="formula">AIR = 35 × V/20 + 30 × L/20 + 35 × C/20 → 0–100</div>
+          <div class="formula">AIR = 35 × V/20 + 30 × L/20 + 35 × C/20 → de 0 a 100</div>
           <div class="legend"><span><i class="g"></i>forte</span><span><i class="y"></i>parcial</span><span><i></i>em falta</span></div>
         </div>
       </article>
@@ -688,7 +699,7 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
 -126 56 -162 122 -28 49 -28 49 -28 1679 0 1630 0 1630 21 1670 37 70 86 112
 159 136 14 5 158 7 320 5 223 -2 318 -7 390 -20z"/>
 </g></svg></span>
-    UZERX - Consultoria, Formação e Produção, Lda<br>
+    UZERX · Consultoria, Formação e Produção, Lda<br>
     Rua de Angola, 6 · 2765-193 Estoril · Portugal
   </div>
   <div class="foot-links">
@@ -863,6 +874,17 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
     requestAnimationFrame(step);
   });
 })();
+
+  /* "cliente": o gradiente deriva devagar e ao acaso, como uma nuvem */
+  const cloud = document.querySelector(".hero .cloud");
+  if (cloud && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const r = (a, b) => (a + Math.random() * (b - a)).toFixed(0);
+    const drift = () => {
+      cloud.style.backgroundPosition = `${r(5,95)}% ${r(10,90)}%, ${r(5,95)}% ${r(10,90)}%, ${r(5,95)}% ${r(10,90)}%, 0 0`;
+      setTimeout(drift, 5200 + Math.random() * 3200);
+    };
+    setTimeout(drift, 400);
+  }
 </script>
 </body>
 </html>
