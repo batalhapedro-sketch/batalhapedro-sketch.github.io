@@ -114,10 +114,11 @@ function promptDialog(title, label, type = "text") {
 
 /* ---------------------------------------------------------------- arranque */
 async function boot() {
-  if (!api) { root.innerHTML = setupScreen(); return; }
-  root.innerHTML = `<div class="loading">A carregar…</div>`;
+  const L = window.AIRLoader;
+  if (!api) { root.innerHTML = setupScreen(); L?.hide(); return; }
   try { if (await api.session()) await enter(); else renderLogin(); }
   catch (e) { renderLogin(e.message); }
+  L?.hide();
 }
 function setupScreen() {
   return `<div class="login"><div class="login-card"><a class="logo" href="/" aria-label="UZER Consulting, página inicial">${LOGO()}</a>
@@ -138,8 +139,9 @@ function renderLogin(err = "") {
   $("#lg-user").focus();
   $("#login-form").addEventListener("submit", async (e) => {
     e.preventDefault(); const b = $("#lg-btn"); b.disabled = true; b.textContent = "A entrar…";
-    try { await api.login($("#lg-user").value, $("#lg-pass").value); await enter(); }
-    catch (er) { $("#lg-err").textContent = er.message; b.disabled = false; b.textContent = "Entrar"; }
+    window.AIRLoader?.show();
+    try { await api.login($("#lg-user").value, $("#lg-pass").value); await enter(); window.AIRLoader?.hide(); }
+    catch (er) { window.AIRLoader?.hide(0); $("#lg-err").textContent = er.message; b.disabled = false; b.textContent = "Entrar"; }
   });
 }
 async function enter() {
