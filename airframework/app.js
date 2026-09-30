@@ -1,4 +1,4 @@
-/* AIR Framework — app cliente/admin (Supabase) */
+/* AIR Framework: app cliente/admin (Supabase) */
 (() => {
 "use strict";
 const CFG = window.AIR_CONFIG || {};
@@ -25,10 +25,10 @@ const V_OWN_EXT = { t: "CANAIS COM LEITURA DIRETA POR IA", q: "(que canais públ
   { t: "Canais próprios (ativáveis pela marca)", ids: ["V1", "V2", "V3"] },
   { t: "Canais externos (ativáveis pela marca)", ids: ["V4", "V5", "V6", "V7", "V8"] }] };
 const STRUCT = {
-  V8: { title: "AIR - AI Readiness Score", credit: "Modelo proprietário UZER CONSULTING · V8 — critérios V1–V10 · L1–L10 · C1–C10 alinhados com a Grelha de Pontuação AIX Score",
+  V8: { title: "AIR - AI Readiness Score", credit: "Modelo proprietário UZER CONSULTING · V8 · critérios V1–V10 · L1–L10 · C1–C10 alinhados com a Grelha de Pontuação AIX Score",
     V: { kicker: "O que permite à IA encontrar a marca", secs: [V_OWN_EXT,
       { t: "CANAIS PAGOS COM IMPACTO INDIRETO", q: "(que canais amplificam procura, tráfego e sinais de interesse pela marca?)", subs: [{ t: "", ids: ["V9", "V10"] }] }] }, ...COMMON_LC },
-  V10: { title: "AIR - AI Readiness Score · V10", credit: "Modelo proprietário UZER CONSULTING · critérios V1–V10 · L1–L10 · C1–C10 · AIR Framework V10 (set 2026) — consolida a V8 (jul 2026) e a revisão V9 (ago 2026)",
+  V10: { title: "AIR - AI Readiness Score · V10", credit: "Modelo proprietário UZER CONSULTING · critérios V1–V10 · L1–L10 · C1–C10 · AIR Framework V10 (set 2026), consolida a V8 (jul 2026) e a revisão V9 (ago 2026)",
     V: { kicker: "O que permite à IA encontrar a marca", secs: [V_OWN_EXT,
       { t: "ÍNDICES DOS ASSISTENTES E CANAIS PAGOS", q: "(onde a IA pesquisa de facto; e o que amplifica os sinais de marca)", subs: [{ t: "", ids: ["V9", "V10"] }] }] }, ...COMMON_LC },
 };
@@ -54,6 +54,7 @@ function supabaseBackend() {
     async updateUser(id, role, clientId) { need(await sb.rpc("admin_update_user", { p_user_id: id, p_role: role, p_client_id: clientId || null })); },
     async deleteUser(id) { need(await sb.rpc("admin_delete_user", { p_user_id: id })); },
     async createClient(slug, name) { need(await sb.from("clients").insert({ slug, name })); },
+    async updateAudit(id, patch) { return need(await sb.from("audits").update(patch).eq("id", id).select("*").single()); },
   };
 }
 function demoBackend() { // só em localhost, para testar a interface sem base de dados; não valida passwords
@@ -74,18 +75,20 @@ function demoBackend() { // só em localhost, para testar a interface sem base d
     async createUser(u, p, role, cid) { US.push({ user_id: "u-" + u, username: u, role, client_id: role === "admin" ? null : cid }); },
     async setPassword() {}, async updateUser(id, role, cid) { Object.assign(US.find((x) => x.user_id === id), { role, client_id: role === "admin" ? null : cid }); },
     async deleteUser(id) { US = US.filter((x) => x.user_id !== id); }, async createClient(slug, name) { CL.push({ id: "c-" + slug, slug, name }); },
+    async updateAudit(id, patch) { const a = AUD.find((x) => x.id === id); Object.assign(a, JSON.parse(JSON.stringify(patch))); return { ...a }; },
   };
 }
 const configured = CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase;
 const api = CFG.demo ? demoBackend() : configured ? supabaseBackend() : null;
 
 /* ---------------------------------------------------------------- estado */
-const S = { me: null, clients: [], audits: [], users: [], view: "audit", clientId: null, auditId: null, tab: "w1", preview: false, open: new Set() };
+const S = { me: null, clients: [], audits: [], users: [], view: "audit", clientId: null, auditId: null, tab: "w1", preview: false, edit: false, open: new Set() };
 const root = $("#app");
 const LOGO = () => $("#logo-tpl").innerHTML;
 const clientOf = (id) => S.clients.find((c) => c.id === id);
 const auditsOf = (cid) => S.audits.filter((a) => a.client_id === cid).sort((a, b) => b.audit_date.localeCompare(a.audit_date));
 const current = () => S.audits.find((a) => a.id === S.auditId) || null;
+const editing = () => S.edit && S.me?.role === "admin" && !S.preview;
 
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("on"), 2200); }
 function confirmDialog(title, text, okLabel = "Confirmar", danger = false) {
@@ -117,14 +120,14 @@ async function boot() {
   catch (e) { renderLogin(e.message); }
 }
 function setupScreen() {
-  return `<div class="login"><div class="login-card"><a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
-    <h1>Plataforma AIR — configuração pendente</h1>
+  return `<div class="login"><div class="login-card"><a class="logo" href="/" aria-label="UZER Consulting, página inicial">${LOGO()}</a>
+    <h1>Plataforma AIR: configuração pendente</h1>
     <p class="login-foot">A base de dados ainda não está ligada (config.js sem URL/chave do Supabase).</p></div></div>`;
 }
 function renderLogin(err = "") {
   root.innerHTML = `<main class="login fade-in"><div class="login-card">
-    <a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
-    <h1>AIR — AI Readiness Score · Área de cliente</h1>
+    <a class="logo" href="/" aria-label="UZER Consulting, página inicial">${LOGO()}</a>
+    <h1>AIR (AI Readiness Score) · Área de cliente</h1>
     <form id="login-form" novalidate>
       <div class="field"><label for="lg-user">Username</label><input id="lg-user" class="input" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
       <div class="field"><label for="lg-pass">Password</label><input id="lg-pass" class="input" type="password" autocomplete="current-password" required></div>
@@ -172,7 +175,7 @@ function renderClient() {
   root.innerHTML = `
     ${S.preview ? `<div class="preview-banner">Pré-visualização: está a ver a plataforma como o cliente <b>${esc(c?.name)}</b> vê. <button class="btn sm" id="exit-preview">Voltar ao admin</button></div>` : ""}
     <header class="topbar"><div class="topbar-in">
-      <a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
+      <a class="logo" href="/" aria-label="UZER Consulting, página inicial">${LOGO()}</a>
       <div class="crumb"><span class="sep"></span><b>${esc(c?.name || "")}</b></div>
       <div class="spacer"></div>
       ${a ? tabsHTML(a) : ""}
@@ -190,20 +193,23 @@ function renderAdmin() {
   const a = S.view === "audit" ? current() : null;
   root.innerHTML = `
     <header class="topbar"><div class="topbar-in">
-      <a class="logo" href="/" aria-label="UZER Consulting — página inicial">${LOGO()}</a>
+      <a class="logo" href="/" aria-label="UZER Consulting, página inicial">${LOGO()}</a>
       <div class="crumb"><span class="sep"></span><span>Admin</span>${a ? `<span>›</span><b>${esc(clientOf(a.client_id)?.name)}</b><span>${fmtDate(a.audit_date)}</span>` : S.view === "users" ? `<span>›</span><b>Utilizadores</b>` : ""}</div>
       <div class="spacer"></div>
       ${a ? tabsHTML(a) : ""}
+      ${a ? `<button class="btn sm ${S.edit ? "on" : ""}" id="edit-mode" aria-pressed="${S.edit}" title="Alterar os textos e as pontuações desta auditoria">${S.edit ? "A editar" : "Editar"}</button>` : ""}
       ${a ? `<button class="btn sm" id="as-client" title="Ver exatamente o que o cliente vê">Ver como cliente</button>` : ""}
       <span class="tag admin">${esc(S.me.username)} · admin</span>
       <button class="btn ghost sm" id="logout">Sair</button>
     </div></header>
     <div class="shell">
       <aside class="sidebar">${sidebarHTML()}</aside>
-      <main class="main fade-in">${S.view === "users" ? usersView() : a ? auditView(a) : `<div class="empty">Selecione uma auditoria na barra lateral.</div>`}</main>
+      <main class="main fade-in">${a && editing() ? `<div class="edit-banner"><b>Modo edição</b><span>${S.tab === "w2" ? "Altere o título da auditoria e o texto de cada pilar e carregue em Guardar." : "Clique num critério para alterar título, pontuação, racional, fontes, citações e link de evidência."} O cliente vê as alterações assim que forem guardadas.</span></div>` : ""}${S.view === "users" ? usersView() : a ? auditView(a) : `<div class="empty">Selecione uma auditoria na barra lateral.</div>`}</main>
     </div>`;
   wireCommon();
   $("#as-client")?.addEventListener("click", () => { S.preview = true; render(); window.scrollTo({ top: 0 }); });
+  $("#edit-mode")?.addEventListener("click", () => { S.edit = !S.edit; render(); });
+  if (a && editing() && S.tab === "w2") wireSummaryEdit(a);
   root.querySelectorAll(".folder>button").forEach((b) => b.addEventListener("click", () => { const id = b.dataset.cid; S.open.has(id) ? S.open.delete(id) : S.open.add(id); b.parentElement.classList.toggle("open"); }));
   root.querySelectorAll(".leaf[data-aid]").forEach((b) => b.addEventListener("click", () => { S.view = "audit"; S.auditId = b.dataset.aid; S.clientId = current().client_id; S.tab = "w1"; render(); }));
   $("#nav-users")?.addEventListener("click", () => { S.view = "users"; render(); });
@@ -213,14 +219,13 @@ const FOLDER = `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="current
 const CHEV = `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>`;
 const USERS_ICO = `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="width:16px;height:16px"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.6c1.4.6 2.3 2 2.6 4.4"/></svg>`;
 function sidebarHTML() {
-  const dotc = (s) => (s >= 75 ? "var(--s2)" : s >= 60 ? "var(--s1)" : "var(--s0)");
   return `<div><div class="side-h">Clientes</div><div class="tree">
     ${S.clients.map((c) => { const list = auditsOf(c.id); return `
       <div class="folder ${S.open.has(c.id) ? "open" : ""}">
         <button data-cid="${esc(c.id)}" aria-expanded="${S.open.has(c.id)}">${CHEV}${FOLDER}<span>${esc(c.name)}</span><span class="cnt">${list.length}</span></button>
         <div class="kids">${list.length ? list.map((a) => `
           <button class="leaf" data-aid="${esc(a.id)}" aria-current="${S.view === "audit" && a.id === S.auditId}">
-            <i class="dotv" style="background:${dotc(a.score_total)}"></i>${fmtDate(a.audit_date)} · ${esc(a.framework)}<span class="meta">${fmt(a.score_total)}</span></button>`).join("")
+            <i class="dotv"></i>${fmtDate(a.audit_date)} · ${esc(a.framework)}<span class="meta">${fmt(a.score_total)}</span></button>`).join("")
           : `<span class="leaf" style="cursor:default">Sem auditorias</span>`}</div>
       </div>`; }).join("")}
     </div></div>
@@ -295,9 +300,9 @@ function auditView(a) {
   if (S.tab === "w2") return summaryView(a);
   return frameworkView(a, S.tab === "w3");
 }
-function critRow(c, scored, pk) {
+function critRow(c, scored, clickable) {
   const dots = [0, 1, 2].map((i) => `<i class="${scored && i === c.score ? "s" + c.score : ""}"></i>`).join("");
-  const attrs = scored ? ` class="crit click" tabindex="0" role="button" data-id="${esc(c.id)}" aria-haspopup="dialog"` : ` class="crit"`;
+  const attrs = clickable ? ` class="crit click${editing() ? " edit" : ""}" tabindex="0" role="button" data-id="${esc(c.id)}" aria-haspopup="dialog"` : ` class="crit"`;
   return `<div${attrs}><span class="id">${esc(c.id)}</span><span class="txt">${esc(c.label)}</span><span class="dots" aria-label="${scored ? SCORE_NAMES[c.score] : "por avaliar"}">${dots}</span></div>`;
 }
 function frameworkView(a, scored) {
@@ -309,14 +314,14 @@ function frameworkView(a, scored) {
       <div class="kicker">${esc(st[k].kicker)}</div>
       <h3>${PNAME[k]}${scored ? `<span class="pscore">${P[k]}/20</span>` : ""}</h3>
       ${st[k].secs.map((s) => `<div class="sec-t">${esc(s.t)}</div><div class="sec-q">${esc(s.q)}</div>
-        ${s.subs.map((sub) => `${sub.t ? `<div class="sub-t">${esc(sub.t)}</div>` : ""}${sub.ids.map((id) => byId[id] ? critRow(byId[id], scored, pk) : "").join("")}`).join("")}`).join("")}
+        ${s.subs.map((sub) => `${sub.t ? `<div class="sub-t">${esc(sub.t)}</div>` : ""}${sub.ids.map((id) => byId[id] ? critRow(byId[id], scored, scored || editing()) : "").join("")}`).join("")}`).join("")}
     </section>`; };
   return `<div class="fw">
     <div class="fw-head"><div><h2>${esc(scored ? "AIR - AI Readiness Score" : st.title)}</h2>
       <div class="sub">Como preparar uma marca para ser incluída nas respostas finais da IA</div>
       ${scored ? `<div class="meta">${esc(a.title || `Diagnóstico: ${cn} · ${fmtDate(a.audit_date)}`)}</div>` : ""}</div></div>
-    ${scored ? `<p class="hint"><b>Clique em qualquer critério</b> para ver a evidência: racional, fontes consultadas e citações exatas.</p>` : ""}
-    <div class="camada"><b>CAMADA IA — A camada de leitura e interpretação que atravessa toda a cadeia digital</b>
+    ${editing() ? "" : scored ? `<p class="hint"><b>Clique em qualquer critério</b> para ver a evidência: racional, fontes consultadas e citações exatas.</p>` : ""}
+    <div class="camada"><b>CAMADA IA: a camada de leitura e interpretação que atravessa toda a cadeia digital</b>
       <div class="models">ChatGPT · Perplexity · Gemini · Claude · Copilot · Google AI Mode · AI Overviews</div>
       <div class="note">O AIR mede prontidão de resposta transversal para visibilidade em IA; não prevê diretamente a probabilidade de citação num modelo específico</div></div>
     <div class="arrows" aria-hidden="true"><span>↓</span><span>↓</span><span>↓</span></div>
@@ -344,19 +349,83 @@ function summaryView(a) {
     const crit = a.criteria.filter((c) => c.id[0] === k), gaps = crit.filter((c) => c.score < 2).sort((x, y) => x.score - y.score);
     const n = [0, 1, 2].map((s) => crit.filter((c) => c.score === s).length);
     const pl = (x, one, many) => `${x} ${x === 1 ? one : many}`;
-    const text = a.summary?.[k] || `Neste pilar: ${pl(n[2], "critério consolidado", "critérios consolidados")}, ${pl(n[1], "iniciado", "iniciados")} e ${pl(n[0], "inexistente", "inexistentes")}. Os pontos por trabalhar estão abaixo; clique num para ver a evidência.`;
+    const text = a.summary?.[k] || autoSummary(a, k);
     return `<article class="sum-card ${PKEY[k]}"><div><span class="badge">${PNAME_T[k]}</span><span class="ps">${P[k]}/20</span></div>
-      <div><p>${esc(text)}</p>${gaps.length ? `<div class="chips">${gaps.map((c) => `<button class="chip" data-id="${esc(c.id)}"><i style="background:var(--s${c.score})"></i><b>${esc(c.id)}</b>${esc(c.label.length > 48 ? c.label.slice(0, 46) + "…" : c.label)}</button>`).join("")}</div>` : ""}</div></article>`;
+      <div>${editing() ? `<textarea class="ed-in" name="sum_${k}" rows="5" aria-label="Texto do pilar ${PNAME_T[k]}">${esc(text)}</textarea>` : `<p>${esc(text)}</p>`}${gaps.length ? `<div class="chips">${gaps.map((c) => `<button class="chip" data-id="${esc(c.id)}"><i style="background:var(--s${c.score})"></i><b>${esc(c.id)}</b>${esc(c.label.length > 48 ? c.label.slice(0, 46) + "…" : c.label)}</button>`).join("")}</div>` : ""}</div></article>`;
   };
-  return `<div class="page-head"><div><div class="eyebrow">Resumo executivo · ${fmtDate(a.audit_date)} · Framework ${esc(a.framework)}</div><h1>${esc(cn)}</h1></div></div>
+  const body = `<div class="page-head"><div><div class="eyebrow">Resumo executivo · ${fmtDate(a.audit_date)} · Framework ${esc(a.framework)}</div><h1>${esc(cn)}</h1></div></div>
+    ${editing() ? `<label class="ed-f dark"><span>Título da auditoria (aparece no Diagnóstico)</span><input class="ed-in dark" name="title" value="${esc(a.title || "")}" placeholder="Diagnóstico: ${esc(cn)} · ${fmtDate(a.audit_date)}"></label>` : ""}
     <div class="sum-head"><div class="kpi"><div class="lbl">AIR ${esc(cn)}</div><div class="val">${fmt(a.score_total)}<small> / 100</small></div><div class="bar"><i style="width:${a.score_total}%"></i></div></div>${kpi("V")}${kpi("L")}${kpi("C")}</div>
     <div class="sum-grid">${card("V")}${card("L")}${card("C")}</div>`;
+  return editing() ? `<form id="ed-sum" novalidate>${body}<div class="ed-bar"><button class="btn primary" id="ed-sum-save">Guardar resumo</button></div></form>` : body;
+}
+function autoSummary(a, k) {
+  const crit = a.criteria.filter((c) => c.id[0] === k), n = [0, 1, 2].map((s) => crit.filter((c) => c.score === s).length);
+  const pl = (x, one, many) => `${x} ${x === 1 ? one : many}`;
+  return `Neste pilar: ${pl(n[2], "critério consolidado", "critérios consolidados")}, ${pl(n[1], "iniciado", "iniciados")} e ${pl(n[0], "inexistente", "inexistentes")}. Os pontos por trabalhar estão abaixo; clique num para ver a evidência.`;
+}
+function wireSummaryEdit(a) {
+  $("#ed-sum").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target, summary = { ...(a.summary || {}) };
+    ["V", "L", "C"].forEach((k) => { const v = f.elements["sum_" + k].value.trim(); if (v && v !== autoSummary(a, k)) summary[k] = v; else delete summary[k]; });
+    await saveAudit(a, { title: f.elements.title.value.trim() || null, summary }, $("#ed-sum-save"), "Guardar resumo");
+  });
+}
+
+/* ---------------------------------------------------------------- gravar (admin) */
+async function saveAudit(a, patch, btn, label = "Guardar alterações") {
+  if (patch.criteria) {                                   // pilares e total recalculados a partir das pontuações
+    const P = { V: 0, L: 0, C: 0 }; patch.criteria.forEach((c) => { P[c.id[0]] += c.score; });
+    patch.pillars = P; patch.score_total = Math.round((35 * P.V / 20 + 30 * P.L / 20 + 35 * P.C / 20) * 10) / 10;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = "A guardar…"; }
+  try {
+    const row = await api.updateAudit(a.id, patch);
+    Object.assign(a, row || patch); $("#panel").dataset.dirty = ""; closePanel(); render(); toast("Alterações guardadas");
+  } catch (er) { toast("Não foi possível guardar: " + er.message); if (btn) { btn.disabled = false; btn.textContent = label; } }
 }
 
 /* ---------------------------------------------------------------- painel de evidência */
+const SRC_ROW = (v) => `<div class="ed-src"><input class="ed-in" value="${esc(v)}" placeholder="dominio.pt/pagina" aria-label="Fonte"><button type="button" class="ed-rm" aria-label="Remover fonte">✕</button></div>`;
+function editorHTML(c) {
+  return `<div class="panel-head"><span class="id">${esc(c.id)}</span><h3 id="panel-title">Editar critério</h3><button class="x" aria-label="Fechar">✕</button></div>
+    <form class="panel-body ed" id="ed-form" novalidate>
+      <label class="ed-f"><span>Título do critério</span><input class="ed-in" name="label" value="${esc(c.label)}"></label>
+      <label class="ed-f"><span>Pontuação</span><select class="ed-in" name="score">${SCORE_NAMES.map((n, i) => `<option value="${i}" ${i === c.score ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+      <label class="ed-f"><span>Racional</span><textarea class="ed-in" name="rationale" rows="5">${esc(c.rationale)}</textarea></label>
+      <div class="ed-f"><span>Fontes consultadas</span><div class="ed-srcs">${(c.sources || []).map(SRC_ROW).join("")}</div><button type="button" class="ed-add">+ Adicionar fonte</button></div>
+      <label class="ed-f"><span>Citações-chave (extratos exatos)</span><textarea class="ed-in" name="quotes" rows="5">${esc(c.quotes)}</textarea></label>
+      <label class="ed-f"><span>Link do Evidence Explorer <em>(só o admin vê)</em></span><input class="ed-in" name="proof_url" value="${esc(c.proof_url || "")}" placeholder="https://…"></label>
+      <div class="ed-acts"><span class="ed-err" role="alert"></span><button type="button" class="btn ed-cancel">Cancelar</button><button class="btn ed-save">Guardar alterações</button></div>
+    </form>`;
+}
+function openEditor(a, c, panel) {
+  panel.innerHTML = editorHTML(c); panel.dataset.dirty = "";
+  const f = $("#ed-form", panel), box = $(".ed-srcs", panel), dirty = () => { panel.dataset.dirty = "1"; };
+  f.addEventListener("input", dirty); f.addEventListener("change", dirty);
+  $(".ed-add", panel).addEventListener("click", () => { box.insertAdjacentHTML("beforeend", SRC_ROW("")); box.lastElementChild.querySelector("input").focus(); dirty(); });
+  box.addEventListener("click", (e) => { const rm = e.target.closest(".ed-rm"); if (rm) { rm.parentElement.remove(); dirty(); } });
+  $(".ed-cancel", panel).addEventListener("click", requestClose);
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const label = f.elements.label.value.trim();
+    if (!label) { $(".ed-err", panel).textContent = "O título do critério não pode ficar vazio."; return; }
+    const next = { ...c, label, score: +f.elements.score.value, rationale: f.elements.rationale.value.trim(), quotes: f.elements.quotes.value.trim(),
+      sources: [...box.querySelectorAll("input")].map((i) => i.value.trim()).filter(Boolean) };
+    const pu = f.elements.proof_url.value.trim(); if (pu) next.proof_url = pu; else delete next.proof_url;
+    await saveAudit(a, { criteria: a.criteria.map((x) => (x.id === c.id ? next : x)) }, $(".ed-save", panel));
+  });
+}
 function openPanel(id) {
   const a = current(); const c = a?.criteria.find((x) => x.id === id); if (!c) return;
   const pk = PKEY[id[0]], panel = $("#panel");
+  if (editing()) {
+    panel.style.setProperty("--pc", `var(--${pk})`); openEditor(a, c, panel);
+    panel.querySelector(".x").addEventListener("click", requestClose);
+    $("#veil").classList.add("on"); panel.classList.add("on"); panel.scrollTop = 0; $("[name=label]", panel).focus({ preventScroll: true });
+    return;
+  }
   const src = (s) => /^[\w.-]+\.[a-z]{2,}(\/[^\s]*)?$/i.test(s) ? `<a href="https://${esc(s)}" target="_blank" rel="noopener">${esc(s)}</a>` : `<span>${esc(s)}</span>`;
   const isAdmin = S.me.role === "admin" && !S.preview;
   panel.style.setProperty("--pc", `var(--${pk})`); panel.style.setProperty("--pi", `var(--${pk}-ink)`);
@@ -365,11 +434,17 @@ function openPanel(id) {
       <div class="pb"><h4>Racional</h4><p>${esc(c.rationale)}</p></div>
       <div class="pb"><h4>Fontes consultadas</h4><div class="srcs">${(c.sources || []).map(src).join("")}</div></div>
       <div class="pb"><h4>Citações-chave (extratos exatos)</h4><div class="quote">${esc(c.quotes)}</div></div></div>
-    ${isAdmin && c.proof_url ? `<div class="panel-foot"><a href="${esc(c.proof_url)}" target="_blank" rel="noopener">Abrir no Evidence Explorer ↗</a><span>Só visível para admin — screenshots e texto integral</span></div>` : ""}`;
-  panel.querySelector(".x").addEventListener("click", closePanel);
+    ${isAdmin && c.proof_url ? `<div class="panel-foot"><a href="${esc(c.proof_url)}" target="_blank" rel="noopener">Abrir no Evidence Explorer ↗</a><span>Só visível para admin: screenshots e texto integral</span></div>` : ""}`;
+  panel.dataset.dirty = "";
+  panel.querySelector(".x").addEventListener("click", requestClose);
   $("#veil").classList.add("on"); panel.classList.add("on"); panel.scrollTop = 0; panel.querySelector(".x").focus({ preventScroll: true });
 }
 function closePanel() { $("#veil")?.classList.remove("on"); $("#panel")?.classList.remove("on"); }
+async function requestClose() {                           // fecho pedido pelo utilizador: avisa se houver alterações por guardar
+  const p = $("#panel");
+  if (p?.dataset.dirty && !(await confirmDialog("Fechar sem guardar?", "As alterações a este critério perdem-se.", "Fechar sem guardar", true))) return;
+  if (p) p.dataset.dirty = ""; closePanel();
+}
 
 /* ---------------------------------------------------------------- ligações comuns */
 function wireCommon() {
@@ -380,8 +455,8 @@ function wireCommon() {
 // listeners delegados no #app (o elemento persiste entre renders; só o conteúdo muda)
 root.addEventListener("click", (e) => { const el = e.target.closest(".crit.click,.chip[data-id]"); if (el) openPanel(el.dataset.id); });
 root.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.matches?.(".crit.click")) { e.preventDefault(); openPanel(e.target.dataset.id); } });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
-$("#veil").addEventListener("click", closePanel);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !document.querySelector(".dialog-veil")) requestClose(); });
+$("#veil").addEventListener("click", requestClose);
 
 boot();
 })();
