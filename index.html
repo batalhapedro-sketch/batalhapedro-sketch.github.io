@@ -45,7 +45,7 @@ a{color:inherit;text-decoration:none}
     radial-gradient(34% 52% at 52% 18%,rgba(26,140,255,.9),transparent 70%),
     linear-gradient(120deg,var(--g2),var(--g3) 55%,var(--g4));
   background-size:230% 230%,240% 240%,260% 260%,100% 100%;background-position:30% 40%,70% 60%,50% 30%,0 0;
-  transition:background-position 7.5s cubic-bezier(.45,.05,.55,.95)}
+  transition:background-position 2.8s cubic-bezier(.45,.05,.55,.95)}
 
 /* nav */
 .nav{position:fixed;top:0;left:0;right:0;z-index:50;padding-top:env(safe-area-inset-top,0px);transition:background .25s,box-shadow .25s}
@@ -882,9 +882,9 @@ c25 17 58 51 74 78 29 47 29 47 28 350 -1 166 -5 338 -10 382 -32 282 -66 475
     const r = (a, b) => (a + Math.random() * (b - a)).toFixed(0);
     const drift = () => {
       cloud.style.backgroundPosition = `${r(5,95)}% ${r(10,90)}%, ${r(5,95)}% ${r(10,90)}%, ${r(5,95)}% ${r(10,90)}%, 0 0`;
-      setTimeout(drift, 5200 + Math.random() * 3200);
+      setTimeout(drift, 1900 + Math.random() * 1400);
     };
-    setTimeout(drift, 400);
+    setTimeout(drift, 150);
   }
 </script>
 </body>
